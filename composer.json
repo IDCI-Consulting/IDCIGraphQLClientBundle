@@ -1,0 +1,38 @@
+{
+    "name": "idci/graphql-client-bundle",
+    "type": "symfony-bundle",
+    "description": "Help you to process graphql query",
+    "keywords": ["graph", "graphql", "client"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Benjamin BOUDIER",
+            "email": "benjamin.boudier@idci-consulting.fr",
+            "homepage": "http://www.idci-consulting.fr"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "symfony/dependency-injection": "^3.3 || ^4.0",
+        "symfony/framework-bundle": "^3.0 || ^4.0",
+        "cfpinto/graphql": "^0.0.8",
+        "predis/predis": "^1.1",
+        "guzzlehttp/guzzle": "^6.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "IDCI\\Bundle\\GraphQLClientBundle\\": ""
+        },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "IDCI\\Bundle\\GraphQLClientBundle\\Tests\\": "Tests"
+        }
+    }
+}
