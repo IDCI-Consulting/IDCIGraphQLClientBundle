@@ -1,0 +1,12 @@
+---
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+        IDCI\Bundle\GraphQLClientBundle\:
+            resource: '../../*'
+            exclude: '../../{Entity,Repository,Tests}'
+
+        IDCI\Bundle\GraphQLClientBundle\Handler\CacheHandlerInterface: '@IDCI\Bundle\GraphQLApiClient\Handler\RedisCacheHandler'
