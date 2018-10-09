@@ -16,9 +16,5 @@ class AppExtension extends Extension
     {
         $configuration = new Configuration($container->getParameter('kernel.debug'));
         $config = $this->processConfiguration($configuration, $configs);
-
-        $container->setParameter('redis.host', $config['host']);
-        $container->setParameter('redis.alias', $config['alias']);
-        $container->setParameter('redis.default_ttl', $config['default_ttl']);
     }
 }

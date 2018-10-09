@@ -17,16 +17,18 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('redis');
+        $rootNode = $treeBuilder->root('idci_graphql_client');
         $rootNode
             ->children()
-                ->scalarNode('host')->end()
-                ->scalarNode('alias')->end()
-                ->scalarNode('default_ttl')->end()
+                ->arrayNode('clients')
+                    ->children()
+                        ->arrayPrototype()
+                            ->scalarNode('http_client')->end()
+                        ->end()
+                    ->end()
+                ->end()
             ->end()
         ;
-
-        dump('test');
 
         return $treeBuilder;
     }
