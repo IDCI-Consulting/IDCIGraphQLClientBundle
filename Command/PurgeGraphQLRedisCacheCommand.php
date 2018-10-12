@@ -2,7 +2,7 @@
 
 namespace IDCI\Bundle\GraphQLClientBundle\Command;
 
-use App\Manager\GraphQLCacheManager;
+use IDCI\Bundle\GraphQLClientBundle\Handler\CacheHandlerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -10,11 +10,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 class PurgeGraphQLRedisCacheCommand extends Command
 {
     /**
-     * @var GraphQLCacheManager
+     * @var CacheHandlerInterface
      */
     private $cache;
 
-    public function __construct(GraphQLCacheManager $cache)
+    public function __construct(CacheHandlerInterface $cache)
     {
         $this->cache = $cache;
 

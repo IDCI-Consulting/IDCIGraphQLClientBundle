@@ -6,7 +6,7 @@ class GraphQLApiClientRegistry implements GraphQLApiClientRegistryInterface
 {
     private $graphQlApiClients = [];
 
-    public function has(string $alias): boolean
+    public function has(string $alias): bool
     {
         return isset($this->graphQlApiClients[$alias]);
     }
@@ -18,12 +18,8 @@ class GraphQLApiClientRegistry implements GraphQLApiClientRegistryInterface
         return $this;
     }
 
-    public function get(string $alias): GraphQLApiClientRegistryInterface
+    public function get(string $alias): GraphQLApiClientInterface
     {
-        if (!is_string($alias)) {
-            throw new \InvalidArgumentException(sprintf('GraphQL api client alias is not a string (value: %s)', $alias));
-        }
-
         if (!isset($this->graphQlApiClients[$alias])) {
             throw new \UnexpectedValueException(sprintf('Could not load graphql api client with alias %s', $alias));
         }

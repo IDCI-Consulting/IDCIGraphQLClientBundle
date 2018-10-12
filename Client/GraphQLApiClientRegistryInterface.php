@@ -4,7 +4,7 @@ namespace IDCI\Bundle\GraphQLClientBundle\Client;
 
 interface GraphQLApiClientRegistryInterface
 {
-    public function has(string $alias): boolean;
+    public function has(string $alias): bool;
 
     public function set(string $alias, GraphQLApiClientInterface $graphQlApiClient): GraphQLApiClientRegistryInterface;
 

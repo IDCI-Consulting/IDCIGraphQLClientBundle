@@ -13,7 +13,7 @@ class RedisCacheHandler implements CacheHandlerInterface
 
     public function __construct(string $redisHost = 'redis.maier.docker', string $alias = 'product') // host & alias configurable
     {
-        $this->client = new Client(sprintf('tcp://%s?alias=%s', $redisHost, $redisAlias));
+        $this->redisClient = new Client(sprintf('tcp://%s?alias=%s', $redisHost, $redisAlias));
     }
 
     public function generateHash(string $data): string
@@ -21,29 +21,29 @@ class RedisCacheHandler implements CacheHandlerInterface
         return hash('sha1', $data); // algo configurable
     }
 
-    public function isCached($key)
+    public function isCached($key): bool
     {
-        return 0 < $this->client->executeRaw(['TTL', $key]);
+        return 0 < $this->redisClient->executeRaw(['TTL', $key]);
     }
 
     public function set($key, $value, $ttl = 3600) // ttl configurable
     {
-        $this->client->executeRaw(['SET', $key, $value]);
-        $this->client->executeRaw(['EXPIRE', $key, $ttl]);
+        $this->redisClient->executeRaw(['SET', $key, $value]);
+        $this->redisClient->executeRaw(['EXPIRE', $key, $ttl]);
     }
 
     public function get($key)
     {
-        return $this->client->executeRaw(['GET', $key]);
+        return $this->redisClient->executeRaw(['GET', $key]);
     }
 
     public function remove($key)
     {
-        $this->client->executeRaw(['DEL', $key]);
+        $this->redisClient->executeRaw(['DEL', $key]);
     }
 
     public function purge()
     {
-        $this->client->executeRaw(['FLUSHALL']);
+        $this->redisClient->executeRaw(['FLUSHALL']);
     }
 }
