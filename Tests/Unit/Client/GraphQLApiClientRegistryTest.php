@@ -42,6 +42,8 @@ class GraphQLApiClientRegistryTest extends TestCase
 
     public function testGet()
     {
+        $dummyGraphQlApiClient = $this->createMock(GraphQLApiClientInterface::class);
+        $this->graphQlApiClientRegistry->set('dummy_alias', $dummyGraphQlApiClient);
         $this->graphQlApiClientRegistry->set('dummy_alias', $this->graphQlApiClient);
 
         $this->assertEquals($this->graphQlApiClient, $this->graphQlApiClientRegistry->get('dummy_alias'));
