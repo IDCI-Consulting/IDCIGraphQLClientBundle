@@ -26,6 +26,10 @@ class GraphQLApiClient implements GraphQLApiClientInterface
 
     public function buildQueryString($action, array $requestedFields): string
     {
+        if (!is_array($action) && !is_string($action)) {
+            throw new \InvalidArgumentException('action parameter must be a string or an array');
+        }
+
         if (is_array($action)) {
             $key = array_keys($action)[0];
             $graphQlQuery = new Graph($key, $action[$key]);
