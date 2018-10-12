@@ -4,5 +4,5 @@ namespace IDCI\Bundle\GraphQLClientBundle\Client;
 
 interface GraphQLApiClientInterface
 {
-    public function query(string $action, array $requestedFields, array $parameters = []): array;
+    public function query($action, array $requestedFields): array;
 }

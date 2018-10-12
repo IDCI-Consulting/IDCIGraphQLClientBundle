@@ -24,24 +24,35 @@ class GraphQLApiClient implements GraphQLApiClientInterface
         $this->cache = $cache;
     }
 
-    public function buildQueryString(string $action, array $requestedFields, array $parameters = []): string
+    public function buildQueryString($action, array $requestedFields): string
     {
-        $graphQlQuery = new Graph($action, $parameters);
+        if (is_array($action)) {
+            $key = array_keys($action)[0];
+            $graphQlQuery = new Graph($key, $action[$key]);
+        } else {
+            $graphQlQuery = new Graph($action);
+        }
+
         array_walk($requestedFields, [$this, 'buildGraph'], $graphQlQuery);
 
         return $this->decodeGraphQLQuery($graphQlQuery);
     }
 
-    public function query(string $action, array $requestedFields, array $parameters = []): array
+    public function query($action, array $requestedFields): array
     {
-        $graphQlQuery = $this->buildQueryString($action, $requestedFields, $parameters);
+        if (!is_array($action) && !is_string($action)) {
+            throw new \InvalidArgumentException('action parameter must be a string or an array');
+        }
+
+        $graphQlQuery = $this->buildQueryString($action, $requestedFields);
+
         $graphQlQueryHash = $this->cache->generateHash($graphQlQuery);
 
         if ($this->cache->isCached($graphQlQueryHash)) {
             return json_decode($this->cache->get($graphQlQueryHash), true);
         }
 
-        $response = $this->httpClient->request('POST', [
+        $response = $this->httpClient->request('POST', '/graphql/', [
             'query' => [
                 'query' => $graphQlQuery,
             ],
@@ -49,13 +60,21 @@ class GraphQLApiClient implements GraphQLApiClientInterface
 
         $result = json_decode($response->getBody(), true);
 
-        if (!isset($result['data'])) {
+        if (!isset($result['data']) || (isset($result['errors']) && 0 < count($result['errors']))) {
+            if (isset($result['errors'][0]['debugMessage'])) {
+                throw new \UnexpectedValueException($result['errors'][0]['debugMessage']);
+            }
+
             throw new \UnexpectedValueException($result['errors'][0]['message']);
         }
 
-        $this->cache->set($graphQlQueryHash, json_encode($result['data']));
+        if (is_array($action)) {
+            $action = array_keys($action)[0];
+        }
 
-        return $result['data'];
+        $this->cache->set($graphQlQueryHash, json_encode($result['data'][$action]));
+
+        return $result['data'][$action];
     }
 
     private function decodeGraphQLQuery(string $graphQlQuery)
@@ -68,8 +87,13 @@ class GraphQLApiClient implements GraphQLApiClientInterface
     private function buildGraph($field, $key, &$graphQlQuery)
     {
         if (is_array($field)) {
-            $graphQlQuery->$key;
-            array_walk($field, [$this, 'buildGraph'], $graphQlQuery->$key);
+            if (array_key_exists('_parameters', $field)) {
+                $graphQlQuery->$key($field['_parameters']);
+                array_walk($field, [$this, 'buildGraph'], $graphQlQuery->$key($field['_parameters']));
+            } elseif ('_parameters' !== $key) {
+                $graphQlQuery->$key;
+                array_walk($field, [$this, 'buildGraph'], $graphQlQuery->$key);
+            }
         } else {
             $graphQlQuery->use($field);
         }
