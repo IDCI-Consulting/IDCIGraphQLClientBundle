@@ -11,9 +11,9 @@ class RedisCacheHandler implements CacheHandlerInterface
      */
     private $redisClient;
 
-    public function __construct(string $redisHost = 'redis.maier.docker', string $alias = 'product') // host & alias configurable
+    public function __construct(string $host = 'redis.maier.docker', string $alias = 'product') // host & alias configurable
     {
-        $this->redisClient = new Client(sprintf('tcp://%s?alias=%s', $redisHost, $redisAlias));
+        $this->redisClient = new Client(sprintf('tcp://%s?alias=%s', $host, $alias));
     }
 
     public function generateHash(string $data): string
