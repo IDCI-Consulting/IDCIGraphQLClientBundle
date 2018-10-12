@@ -7,13 +7,6 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    private $debug;
-
-    public function __construct(bool $debug)
-    {
-        $this->debug = (bool) $debug;
-    }
-
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
@@ -21,8 +14,8 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('clients')
-                    ->children()
-                        ->arrayPrototype()
+                    ->arrayPrototype()
+                        ->children()
                             ->scalarNode('http_client')->end()
                         ->end()
                     ->end()
