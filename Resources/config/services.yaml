@@ -5,8 +5,15 @@ services:
         autoconfigure: true
         public: false
 
-        IDCI\Bundle\GraphQLClientBundle\:
-            resource: '../../*'
-            exclude: '../../{Entity,Repository,Tests}'
+    IDCI\Bundle\GraphQLClientBundle\:
+        resource: '../../*'
+        exclude: '../../{Entity,Repository,Tests}'
 
-        IDCI\Bundle\GraphQLClientBundle\Handler\CacheHandlerInterface: '@IDCI\Bundle\GraphQLApiClient\Handler\RedisCacheHandler'
+    IDCI\Bundle\GraphQLClientBundle\Handler\RedisCacheHandler: ~
+    IDCI\Bundle\GraphQLClientBundle\Handler\CacheHandlerInterface: '@IDCI\Bundle\GraphQLClientBundle\Handler\RedisCacheHandler'
+
+    IDCI\Bundle\GraphQLClientBundle\Client\GraphQLApiClient:
+        abstract: true
+        arguments: [null]
+
+    IDCI\Bundle\GraphQLClientBundle\Client\GraphQLApiClientRegistry: ~
