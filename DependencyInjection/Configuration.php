@@ -13,11 +13,11 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('idci_graphql_client');
         $rootNode
             ->children()
-                ->booleanNode('cache_enabled')->end()
+                ->booleanNode('cache_enabled')->defaultFalse()->end()
                 ->arrayNode('clients')
                     ->arrayPrototype()
                         ->children()
-                            ->scalarNode('http_client')->end()
+                            ->scalarNode('http_client')->isRequired()->cannotBeEmpty()->end()
                             ->scalarNode('cache')->end()
                             ->scalarNode('cache_ttl')->defaultValue(3600)->end()
                         ->end()
