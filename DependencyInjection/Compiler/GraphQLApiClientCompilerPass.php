@@ -18,14 +18,31 @@ class GraphQLApiClientCompilerPass implements CompilerPassInterface
     {
         $registryDefinition = $container->getDefinition(GraphQLApiClientRegistry::class);
 
-        $graphQlClients = $container->getParameter('idci_graphql_client.clients');
+        $servicesRootConfigurationName = 'idci_graphql_client.clients';
+        $graphQlClients = $container->getParameter($servicesRootConfigurationName);
 
         foreach ($graphQlClients as $alias => $configuration) {
             $serviceDefinition = new ChildDefinition(GraphQLApiClient::class);
             $serviceDefinition->setAbstract(false);
+
+            if (!isset($configuration['http_client'])) {
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'You must define a http client in graph ql client with alias %s under %s',
+                        $configuration['http_client'],
+                        $servicesRootConfigurationName
+                    )
+                );
+            }
+
             $serviceDefinition->replaceArgument(0, $container->getDefinition($configuration['http_client']));
 
-            $serviceName = sprintf('idci_graphql_client.clients.%s', $alias);
+            if ($container->getParameter('idci_graphql_client.cache_enabled') && isset($configuration['cache'])) {
+                $serviceDefinition->replaceArgument(1, $container->getDefinition($configuration['cache']));
+                $serviceDefinition->replaceArgument(2, $configuration['cache_ttl']);
+            }
+
+            $serviceName = sprintf('%s.%s', $servicesRootConfigurationName, $alias);
             $container->setDefinition($serviceName, $serviceDefinition);
 
             $registryDefinition->addMethodCall('set', [$alias, new Reference($serviceName)]);

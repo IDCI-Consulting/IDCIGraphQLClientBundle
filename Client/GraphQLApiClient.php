@@ -2,8 +2,8 @@
 
 namespace IDCI\Bundle\GraphQLClientBundle\Client;
 
+use Cache\Namespaced\NamespacedCachePool;
 use GuzzleHttp\ClientInterface;
-use IDCI\Bundle\GraphQLClientBundle\Handler\CacheHandlerInterface;
 use IDCI\Bundle\GraphQLClientBundle\Query\GraphQLQuery;
 
 class GraphQLApiClient implements GraphQLApiClientInterface
@@ -18,10 +18,16 @@ class GraphQLApiClient implements GraphQLApiClientInterface
      */
     private $httpClient;
 
-    public function __construct(ClientInterface $httpClient, CacheHandlerInterface $cache)
+    /**
+     * @var int
+     */
+    private $cacheTTL;
+
+    public function __construct(ClientInterface $httpClient, ?NamespacedCachePool $cache, ?int $cacheTTL = 3600)
     {
         $this->httpClient = $httpClient;
         $this->cache = $cache;
+        $this->cacheTTL = $cacheTTL;
     }
 
     public function buildQuery($action, array $requestedFields): GraphQLQuery
@@ -31,10 +37,9 @@ class GraphQLApiClient implements GraphQLApiClientInterface
 
     public function query(GraphQLQuery $graphQlQuery, bool $cache = true): array
     {
-        $graphQlQueryHash = $this->cache->generateHash($graphQlQuery->getGraphQlQuery());
-
-        if ($cache && $this->cache->isCached($graphQlQueryHash)) {
-            return json_decode($this->cache->get($graphQlQueryHash), true);
+        $graphQlQueryHash = $graphQlQuery->hash();
+        if ($cache && null !== $this->cache && $this->cache->hasItem($graphQlQueryHash)) {
+            return $this->cache->getItem($graphQlQueryHash)->get();
         }
 
         $response = $this->httpClient->request('POST', '/graphql/', [
@@ -53,7 +58,14 @@ class GraphQLApiClient implements GraphQLApiClientInterface
             throw new \UnexpectedValueException($result['errors'][0]['message']);
         }
 
-        $this->cache->set($graphQlQueryHash, json_encode($result['data'][$graphQlQuery->getAction()]));
+        if ($cache && null !== $this->cache) {
+            $item = $this->cache->getItem($graphQlQuery->hash());
+
+            $item->set($result['data'][$graphQlQuery->getAction()]);
+            $item->expiresAfter($this->cacheTTL);
+
+            $this->cache->save($item);
+        }
 
         return $result['data'][$graphQlQuery->getAction()];
     }

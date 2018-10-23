@@ -17,6 +17,7 @@ class IDCIGraphQLClientExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yaml');
 
+        $container->setParameter('idci_graphql_client.cache_enabled', $config['cache_enabled']);
         $container->setParameter('idci_graphql_client.clients', $config['clients']);
     }
 

@@ -94,6 +94,11 @@ class GraphQLQuery
         }, $graphQlQuery);
     }
 
+    public function getHash()
+    {
+        return hash('sha1', $this->query);
+    }
+
     private function buildGraph($field, $key, &$graphQlQuery)
     {
         if (is_array($field)) {
