@@ -2,7 +2,7 @@
 
 namespace IDCI\Bundle\GraphQLClientBundle\Client;
 
-use Cache\Namespaced\NamespacedCachePool;
+use Cache\Hierarchy\HierarchicalPoolInterface;
 use GuzzleHttp\ClientInterface;
 use IDCI\Bundle\GraphQLClientBundle\Query\GraphQLQuery;
 
@@ -23,7 +23,7 @@ class GraphQLApiClient implements GraphQLApiClientInterface
      */
     private $cacheTTL;
 
-    public function __construct(ClientInterface $httpClient, ?NamespacedCachePool $cache, ?int $cacheTTL = 3600)
+    public function __construct(ClientInterface $httpClient, ?HierarchicalPoolInterface $cache, ?int $cacheTTL = 3600)
     {
         $this->httpClient = $httpClient;
         $this->cache = $cache;
@@ -37,7 +37,7 @@ class GraphQLApiClient implements GraphQLApiClientInterface
 
     public function query(GraphQLQuery $graphQlQuery, bool $cache = true): array
     {
-        $graphQlQueryHash = $graphQlQuery->hash();
+        $graphQlQueryHash = $graphQlQuery->getHash();
         if ($cache && null !== $this->cache && $this->cache->hasItem($graphQlQueryHash)) {
             return $this->cache->getItem($graphQlQueryHash)->get();
         }
@@ -59,7 +59,7 @@ class GraphQLApiClient implements GraphQLApiClientInterface
         }
 
         if ($cache && null !== $this->cache) {
-            $item = $this->cache->getItem($graphQlQuery->hash());
+            $item = $this->cache->getItem($graphQlQuery->getHash());
 
             $item->set($result['data'][$graphQlQuery->getAction()]);
             $item->expiresAfter($this->cacheTTL);
