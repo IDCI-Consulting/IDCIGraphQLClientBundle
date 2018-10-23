@@ -23,11 +23,33 @@ class GraphQLApiClient implements GraphQLApiClientInterface
      */
     private $cacheTTL;
 
-    public function __construct(ClientInterface $httpClient, ?HierarchicalPoolInterface $cache, ?int $cacheTTL = 3600)
+    public function __construct(ClientInterface $httpClient, $cache = null, ?int $cacheTTL = 3600)
     {
         $this->httpClient = $httpClient;
-        $this->cache = $cache;
         $this->cacheTTL = $cacheTTL;
+
+        $this->setCache($cache);
+    }
+
+    private function setCache($cache)
+    {
+        if (null !== $cache) {
+            if (!interface_exists(HierarchicalPoolInterface::class)) {
+                throw new \RuntimeException('IDCIGraphQLClient cache requires "cache/adapter-bundle" package');
+            }
+
+            if (!$cache instanceof HierarchicalPoolInterface) {
+                throw new \UnexpectedValueException(
+                    sprintf(
+                        'GraphQL client must implement %s, %s given',
+                        HierarchicalPoolInterface::class,
+                        get_class($cache)
+                    )
+                );
+            }
+
+            $this->cache = $cache;
+        }
     }
 
     public function buildQuery($action, array $requestedFields): GraphQLQuery
