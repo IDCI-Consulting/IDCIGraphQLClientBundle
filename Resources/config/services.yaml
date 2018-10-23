@@ -9,9 +9,6 @@ services:
         resource: '../../*'
         exclude: '../../{Entity,Repository,Tests}'
 
-    IDCI\Bundle\GraphQLClientBundle\Handler\RedisCacheHandler: ~
-    IDCI\Bundle\GraphQLClientBundle\Handler\CacheHandlerInterface: '@IDCI\Bundle\GraphQLClientBundle\Handler\RedisCacheHandler'
-
     IDCI\Bundle\GraphQLClientBundle\Client\GraphQLApiClient:
         abstract: true
         arguments: [null, null, null]
