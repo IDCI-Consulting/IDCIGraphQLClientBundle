@@ -69,7 +69,10 @@ The client use a query builder which simplify the formatting of the graphql quer
 ```php
 <?php
 
-$query = $graphQlApiClientRegistry->get('my_client')->buildQuery($action, array $requestedFields): GraphQLQuery;
+class GraphQLApiClient
+{
+    public function buildQuery($action, array $requestedFields): GraphQLQuery;
+}
 ```
 
 Then the GraphQLQuery object can be use to retrieve the builded GraphQL query in string format
