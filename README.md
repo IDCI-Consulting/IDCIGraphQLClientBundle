@@ -27,17 +27,6 @@ With composer:
 $ composer require idci/graphql-client-bundle
 ```
 
-Add bundle in ```config/bundles.php``` file:
-
-```php
-<?php
-
-return [
-    // ...,
-    IDCI\Bundle\GraphQLClientBundle\IDCIGraphQLClientBundle::class => ['all' => true],
-];
-```
-
 Basic configuration
 -------------------
 
