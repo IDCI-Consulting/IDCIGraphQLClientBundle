@@ -3,21 +3,6 @@ IDCI GraphQL Client Bundle
 
 This symfony 4 bundle provide help with GraphQL api with php thanks to a client, a query builder and a cache management.
 
-Pre-requisite
--------------
-
-Install [eightpoints/guzzle-bundle](https://packagist.org/packages/eightpoints/guzzle-bundle):
-
-```shell
-$ composer require eightpoints/guzzle-bundle
-```
-
-Install [cache/adapter-bundle](https://packagist.org/packages/cache/adapter-bundle) (if you want to use cache):
-
-```shell
-$ composer require cache/adapter-bundle
-```
-
 Installation
 ------------
 
@@ -211,6 +196,12 @@ will generate
 
 Cache
 -----
+
+Install [cache/adapter-bundle](https://packagist.org/packages/cache/adapter-bundle):
+
+```shell
+$ composer require cache/adapter-bundle
+```
 
 Create new cache adapter provider(s) in your ```config/packages/cache_adapter.yaml``` ([official docs](http://www.php-cache.com/en/latest/symfony/adapter-bundle/))
 
