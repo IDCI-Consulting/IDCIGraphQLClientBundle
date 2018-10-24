@@ -4,6 +4,7 @@ namespace IDCI\Bundle\GraphQLClientBundle\Client;
 
 use Cache\Hierarchy\HierarchicalPoolInterface;
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\TransferException;
 use IDCI\Bundle\GraphQLClientBundle\Query\GraphQLQuery;
 
 class GraphQLApiClient implements GraphQLApiClientInterface
@@ -64,24 +65,27 @@ class GraphQLApiClient implements GraphQLApiClientInterface
             return $this->cache->getItem($graphQlQueryHash)->get();
         }
 
-        $response = $this->httpClient->request('POST', '/graphql/', [
-            'query' => [
-                'query' => $graphQlQuery->getGraphQlQuery(),
-            ],
-        ]);
+        try {
+            $response = $this->httpClient->request('POST', '', [
+                'headers' => [
+                    'Accept-Encoding' => 'gzip',
+                ],
+                'form_params' => [
+                    'query' => $graphQlQuery->getGraphQlQuery(),
+                ],
+            ]);
+        } catch (TransferException $e) {
+            throw new \RuntimeException(sprintf('Network Error: %s', $e->getMessage()), 0, $e);
+        }
 
         $result = json_decode($response->getBody(), true);
 
-        if (!isset($result['data']) || (isset($result['errors']) && 0 < count($result['errors']))) {
-            if (isset($result['errors'][0]['debugMessage'])) {
-                throw new \UnexpectedValueException($result['errors'][0]['debugMessage']);
-            }
-
-            throw new \UnexpectedValueException($result['errors'][0]['message']);
+        if (!isset($result['data']) || (isset($result['errors'][0]))) {
+            throw new \UnexpectedValueException(json_encode($result['errors']));
         }
 
         if ($cache && null !== $this->cache) {
-            $item = $this->cache->getItem($graphQlQuery->getHash());
+            $item = $this->cache->getItem($graphQlQueryHash);
 
             $item->set($result['data'][$graphQlQuery->getAction()]);
             $item->expiresAfter($this->cacheTTL);
