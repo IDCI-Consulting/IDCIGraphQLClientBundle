@@ -197,6 +197,52 @@ will generate
 }
 ```
 
+#### Fragments
+```php
+<?php
+
+$query = $graphQlApiClientRegistry->get('my_client')->buildQuery(
+    'child',
+    [
+        'name',
+        'age',
+        'toys' => [
+            '_fragments' => [
+                'Robot' => [
+                    'name',
+                    'sensors',
+                ],
+                'Car' => [
+                    'name',
+                    'color',
+                ],
+            ],
+        ],
+    ]
+)->getGraphQlQuery();
+```
+
+will generate
+
+```
+{
+  child {
+    name
+    age
+    toys {
+      ... on Robot {
+        name
+        sensors
+      }
+      ... on Car {
+        name
+        color
+      }
+    }
+  }
+}
+```
+
 Cache
 -----
 

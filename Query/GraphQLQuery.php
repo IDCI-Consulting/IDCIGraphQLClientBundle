@@ -101,16 +101,18 @@ class GraphQLQuery
 
     private function buildGraph($field, $key, &$graphQlQuery)
     {
-        if (is_array($field)) {
-            if (array_key_exists('_parameters', $field)) {
-                $graphQlQuery->$key($field['_parameters']);
-                array_walk($field, [$this, 'buildGraph'], $graphQlQuery->$key($field['_parameters']));
-            } elseif ('_parameters' !== $key) {
-                $graphQlQuery->$key;
-                array_walk($field, [$this, 'buildGraph'], $graphQlQuery->$key);
+        if (!is_array($field)) {
+            return $graphQlQuery->use($field);
+        }
+
+        if (array_key_exists('_parameters', $field)) {
+            array_walk($field, [$this, 'buildGraph'], $graphQlQuery->$key($field['_parameters']));
+        } elseif ('_fragments' === $key) {
+            foreach ($field as $fragment => $subfield) {
+                array_walk($subfield, [$this, 'buildGraph'], $graphQlQuery->on($fragment));
             }
-        } else {
-            $graphQlQuery->use($field);
+        } elseif ('_parameters' !== $key) {
+            array_walk($field, [$this, 'buildGraph'], $graphQlQuery->$key);
         }
     }
 }
