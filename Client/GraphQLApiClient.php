@@ -81,7 +81,10 @@ class GraphQLApiClient implements GraphQLApiClientInterface
         $result = json_decode($response->getBody(), true);
 
         if (!isset($result['data']) || (isset($result['errors'][0]))) {
-            throw new \UnexpectedValueException(json_encode($result['errors']));
+            if (isset($result['errors'][0]['debugMessage'])) {
+                throw new \UnexpectedValueException($result['errors'][0]['debugMessage']);
+            }
+            throw new \UnexpectedValueException($result['errors'][0]['message']);
         }
 
         if ($cache && null !== $this->cache) {
