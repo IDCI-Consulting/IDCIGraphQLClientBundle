@@ -17,7 +17,7 @@ class PurgeGraphQLCacheCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('cache:graphql:clear')
+            ->setName('graphql:cache:clear')
             ->setDescription('Clear graphql query cache')
             ->setHelp('Clear results of graphql queries in cache')
             ->setHelp(
