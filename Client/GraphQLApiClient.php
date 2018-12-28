@@ -6,6 +6,7 @@ use Cache\Hierarchy\HierarchicalPoolInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\TransferException;
 use IDCI\Bundle\GraphQLClientBundle\Query\GraphQLQuery;
+use IDCI\Bundle\GraphQLClientBundle\Query\GraphQLQueryBuilder;
 
 class GraphQLApiClient implements GraphQLApiClientInterface
 {
@@ -51,6 +52,11 @@ class GraphQLApiClient implements GraphQLApiClientInterface
 
             $this->cache = $cache;
         }
+    }
+
+    public function createQueryBuilder(): GraphQLQueryBuilder
+    {
+        return new GraphQLQueryBuilder($this);
     }
 
     public function buildQuery($action, array $requestedFields): GraphQLQuery
