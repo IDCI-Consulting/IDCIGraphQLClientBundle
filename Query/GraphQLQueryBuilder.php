@@ -4,7 +4,7 @@ namespace IDCI\Bundle\GraphQLClientBundle\Query;
 
 use IDCI\Bundle\GraphQLClientBundle\Client\GraphQLApiClientInterface;
 
-class QueryBuilder
+class GraphQLQueryBuilder
 {
     /**
      * @var string
