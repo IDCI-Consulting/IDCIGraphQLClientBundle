@@ -61,8 +61,8 @@ class HomeController extends AbstractController
 }
 ```
 
-Query builder
--------------
+Simple Query builder
+--------------------
 
 The client use a query builder which simplify the formatting of the graphql query.
 
@@ -72,6 +72,8 @@ The client use a query builder which simplify the formatting of the graphql quer
 class GraphQLApiClient
 {
     public function buildQuery($action, array $requestedFields): GraphQLQuery;
+
+    public function buildMutation($action, array $requestedFields): GraphQLQuery;
 }
 ```
 
@@ -227,6 +229,91 @@ will generate
 ```
 {
   child {
+    name
+    age
+    toys {
+      ... on Robot {
+        name
+        sensors
+      }
+      ... on Car {
+        name
+        color
+      }
+    }
+  }
+}
+```
+
+#### Mutations
+
+```php
+<?php
+
+$query = $graphQlApiClientRegistry->get('my_client')->buildMutation(
+    [
+        'child' => [
+            'age' => 6
+        ]
+    ],
+    [
+        'name',
+        'age',
+    ]
+)->getGraphQlQuery();
+```
+
+will generate
+
+```
+mutation {
+  child(age: 6) {
+    name
+    age
+  }
+}
+```
+
+Fluent Query builder
+--------------------
+
+You can also use an alternative version of the query builder with a fluent interface (inspired by doctrine query builder).
+
+```php
+<?php
+
+$qb = $graphQlApiClientRegistry->get('my_client')->createQueryBuilder();
+
+$qb
+    ->setType('mutation')
+    ->setAction('child')
+    ->addArgument('age', 6)
+    ->addRequestedFields('name')
+    ->addRequestedFields('age')
+    ->addRequestedFields('toys', [
+        '_fragments' => [
+            'Robot' => [
+                'name',
+                'sensors',
+            ],
+            'Car' => [
+                'name',
+                'color',
+            ],
+        ],
+    ])
+;
+
+$qb->getQuery()->getResults();
+
+?>
+```
+
+Will generate
+
+```
+mutation {
+  child(age: 6) {
     name
     age
     toys {

@@ -3,10 +3,20 @@
 namespace IDCI\Bundle\GraphQLClientBundle\Query;
 
 use GraphQL\Graph;
+use GraphQL\Mutation;
 use IDCI\Bundle\GraphQLClientBundle\Client\GraphQLApiClientInterface;
 
 class GraphQLQuery
 {
+    const MUTATION_TYPE = 'mutation';
+
+    const QUERY_TYPE = 'query';
+
+    /**
+     * @var string
+     */
+    private $type;
+
     /**
      * @var string|array
      */
@@ -32,12 +42,19 @@ class GraphQLQuery
      */
     private $client;
 
-    public function __construct($action, array $requestedFields, GraphQLApiClientInterface $client)
+    public function __construct(string $type, $action, array $requestedFields, GraphQLApiClientInterface $client)
     {
         if (!is_array($action) && !is_string($action)) {
             throw new \InvalidArgumentException('action parameter must be a string or an array');
         }
 
+        if (self::MUTATION_TYPE !== $type && self::QUERY_TYPE !== $type) {
+            throw new \InvalidArgumentException(
+                sprintf('query type must be a "%s" or "%s"', self::MUTATION_TYPE, self::QUERY_TYPE)
+            );
+        }
+
+        $this->type = $type;
         $this->action = $action;
         $this->requestedFields = $requestedFields;
         $this->client = $client;
@@ -52,9 +69,17 @@ class GraphQLQuery
             $this->action = $key;
             $this->actionParameters = $action[$key];
 
-            $graphQlQuery = new Graph($key, $action[$key]);
+            if (self::QUERY_TYPE === $this->type) {
+                $graphQlQuery = new Graph($key, $action[$key]);
+            } else {
+                $graphQlQuery = new Mutation($key, $action[$key]);
+            }
         } else {
-            $graphQlQuery = new Graph($action);
+            if (self::QUERY_TYPE === $this->type) {
+                $graphQlQuery = new Graph($action);
+            } else {
+                throw new \InvalidArgumentException('You must pass parameters when performing mutations!');
+            }
         }
 
         array_walk($requestedFields, [$this, 'buildGraph'], $graphQlQuery);

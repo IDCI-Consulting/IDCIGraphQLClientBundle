@@ -9,6 +9,11 @@ class GraphQLQueryBuilder
     /**
      * @var string
      */
+    private $type = GraphQLQuery::QUERY_TYPE;
+
+    /**
+     * @var string
+     */
     private $action;
 
     /**
@@ -29,6 +34,13 @@ class GraphQLQueryBuilder
     public function __construct(GraphQLApiClientInterface $client)
     {
         $this->client = $client;
+    }
+
+    public function setType(string $type): self
+    {
+        $this->type = $type;
+
+        return $this;
     }
 
     public function setAction(string $action): self
@@ -96,6 +108,6 @@ class GraphQLQueryBuilder
             $action = [$action => $this->arguments];
         }
 
-        return new GraphQLQuery($action, $this->requestedFields, $this->client);
+        return new GraphQLQuery($this->type, $action, $this->requestedFields, $this->client);
     }
 }
