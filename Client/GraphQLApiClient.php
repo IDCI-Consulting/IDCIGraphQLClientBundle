@@ -2,11 +2,11 @@
 
 namespace IDCI\Bundle\GraphQLClientBundle\Client;
 
-use Cache\Hierarchy\HierarchicalPoolInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\TransferException;
 use IDCI\Bundle\GraphQLClientBundle\Query\GraphQLQuery;
 use IDCI\Bundle\GraphQLClientBundle\Query\GraphQLQueryBuilder;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 class GraphQLApiClient implements GraphQLApiClientInterface
 {
@@ -36,17 +36,13 @@ class GraphQLApiClient implements GraphQLApiClientInterface
     private function setCache($cache)
     {
         if (null !== $cache) {
-            if (!interface_exists(HierarchicalPoolInterface::class)) {
-                throw new \RuntimeException('IDCIGraphQLClient cache requires "cache/adapter-bundle" package');
+            if (!interface_exists(AdapterInterface::class)) {
+                throw new \RuntimeException('IDCIGraphQLClient cache requires "symfony/cache" package');
             }
 
-            if (!$cache instanceof HierarchicalPoolInterface) {
+            if (!$cache instanceof AdapterInterface) {
                 throw new \UnexpectedValueException(
-                    sprintf(
-                        'GraphQL client must implement %s, %s given',
-                        HierarchicalPoolInterface::class,
-                        get_class($cache)
-                    )
+                    sprintf('The client\'s cache adapter must implement %s.', AdapterInterface::class)
                 );
             }
 
@@ -62,11 +58,6 @@ class GraphQLApiClient implements GraphQLApiClientInterface
     public function buildQuery($action, array $requestedFields): GraphQLQuery
     {
         return new GraphQLQuery(GraphQLQuery::QUERY_TYPE, $action, $requestedFields, $this);
-    }
-
-    public function buildMutation($action, array $requestedFields): GraphQLQuery
-    {
-        return new GraphQLQuery(GraphQLQuery::MUTATION_TYPE, $action, $requestedFields, $this);
     }
 
     public function query(GraphQLQuery $graphQlQuery, bool $cache = true): array

@@ -5,26 +5,21 @@ namespace IDCI\Bundle\GraphQLClientBundle\Test\Unit\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Psr7\Response;
 use IDCI\Bundle\GraphQLClientBundle\Client\GraphQLApiClient;
-use IDCI\Bundle\GraphQLClientBundle\Handler\CacheHandlerInterface;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Symfony\Component\Cache\CacheItem;
 
 class GraphQLApiClientTest extends TestCase
 {
     public function setUp()
     {
-        $this->cache = $this->createMock(CacheHandlerInterface::class);
+        $this->cache = $this->createMock(AdapterInterface::class);
+        $this->item = new CacheItem();
 
-        $this->cache->method('generateHash')->will($this->returnCallback(function ($graphQlQuery) {
-            return sha1($graphQlQuery);
-        }));
-
-        $this->cache->method('isCached')->will($this->returnCallback(function ($hashGraphQlQuery) {
-            if ('92393a1e3ea51e5dd1fe80b66930d6e8608daa23' === $hashGraphQlQuery) {
-                return false;
-            }
-
-            return true;
-        }));
+        $this->cache
+            ->method('getItem')
+            ->willReturn($this->item)
+        ;
 
         $this->cachedResult = [
             'object' => [
@@ -32,8 +27,6 @@ class GraphQLApiClientTest extends TestCase
                 'cached' => true,
             ],
         ];
-
-        $this->cache->method('get')->willReturn(json_encode($this->cachedResult));
 
         $this->cachedQuery = [
             'action' => 'testGetObjects',
@@ -111,21 +104,21 @@ class GraphQLApiClientTest extends TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testBuildQueryStringWithInvalidActionType()
+    public function testBuildQueryWithInvalidActionType()
     {
-        $this->graphQlApiClient->buildQueryString(
+        $this->graphQlApiClient->buildQuery(
             1000,
             $this->notCachedQuery['requestedFields']
         );
     }
 
-    public function testBuildQueryString()
+    public function testBuildQuery()
     {
         $this->assertEquals(
-            $this->graphQlApiClient->buildQueryString(
+            $this->graphQlApiClient->buildQuery(
                 $this->notCachedQuery['action'],
                 $this->notCachedQuery['requestedFields']
-            ),
+            )->getGraphQLQuery(),
             <<<EOT
 {
   testGetObjects {
@@ -138,15 +131,15 @@ EOT
         );
     }
 
-    public function testBuildQueryStringWithParameters()
+    public function testBuildQueryWithParameters()
     {
         $this->assertEquals(
-            $this->graphQlApiClient->buildQueryString(
+            $this->graphQlApiClient->buildQuery(
                 [
                     $this->notCachedQuery['action'] => $this->notCachedQuery['parameters'],
                 ],
                 $this->notCachedQuery['requestedFields']
-            ),
+            )->getGraphQLQuery(),
             <<<EOT
 {
   testGetObjects(cached: "false") {
@@ -159,13 +152,13 @@ EOT
         );
     }
 
-    public function testBuildQueryStringWithSubQueryParameters()
+    public function testBuildQueryWithSubQueryParameters()
     {
         $this->assertEquals(
-            $this->graphQlApiClient->buildQueryString(
+            $this->graphQlApiClient->buildQuery(
                 $this->notCachedQuery['action'],
                 $this->notCachedQuery['requestedFieldsWithSubParameters']
-            ),
+            )->getGraphQLQuery(),
             <<<EOT
 {
   testGetObjects {
@@ -178,13 +171,13 @@ EOT
         );
     }
 
-    public function testBuildQueryStringIfEncodedChar()
+    public function testBuildQueryIfEncodedChar()
     {
         $this->assertEquals(
-            $this->graphQlApiClient->buildQueryString(
+            $this->graphQlApiClient->buildQuery(
                 'test\u00e9',
                 $this->notCachedQuery['requestedFields']
-            ),
+            )->getGraphQLQuery(),
             <<<EOT
 {
   testé {
@@ -203,19 +196,35 @@ EOT
     public function testQueryWithInvalidActionType()
     {
         $this->graphQlApiClient->query(
-            1000,
-            $this->notCachedQuery['requestedFields']
+            $this->graphQlApiClient->buildQuery(
+                1000,
+                $this->notCachedQuery['requestedFields']
+            )
         );
     }
 
     public function testQueryIfAlreadyInCache()
     {
-        $result = $this->graphQlApiClient->query(
+        $graphQlQuery = $this->graphQlApiClient->buildQuery(
             [
                 $this->cachedQuery['action'] => $this->cachedQuery['parameters'],
             ],
             $this->cachedQuery['requestedFields']
         );
+
+        $this->item->set($this->cachedResult);
+
+        $this->cache
+            ->method('hasItem')
+            ->willReturn(true)
+        ;
+
+        $this->cache
+            ->method('getItem')
+            ->willReturn($this->item)
+        ;
+
+        $result = $this->graphQlApiClient->query($graphQlQuery);
 
         $this->assertEquals($this->cachedResult, $result);
     }
@@ -229,10 +238,12 @@ EOT
         $this->httpClient->method('request')->willReturn($this->httpClientErrorResponse);
 
         $result = $this->graphQlApiClient->query(
-            [
-                $this->notCachedQuery['action'] => $this->notCachedQuery['parameters'],
-            ],
-            $this->notCachedQuery['requestedFields']
+            $this->graphQlApiClient->buildQuery(
+                [
+                    $this->notCachedQuery['action'] => $this->notCachedQuery['parameters'],
+                ],
+                $this->notCachedQuery['requestedFields']
+            )
         );
     }
 
@@ -245,22 +256,30 @@ EOT
         $this->httpClient->method('request')->willReturn($this->httpClientDebugResponse);
 
         $result = $this->graphQlApiClient->query(
-            [
-                $this->notCachedQuery['action'] => $this->notCachedQuery['parameters'],
-            ],
-            $this->notCachedQuery['requestedFields']
+            $this->graphQlApiClient->buildQuery(
+                [
+                    $this->notCachedQuery['action'] => $this->notCachedQuery['parameters'],
+                ],
+                $this->notCachedQuery['requestedFields']
+            )
         );
     }
 
     public function testQueryIfNotInCache()
     {
         $this->httpClient->method('request')->willReturn($this->httpClientSuccessfulResponse);
+        $this->cache
+            ->method('hasItem')
+            ->willReturn(false)
+        ;
 
         $result = $this->graphQlApiClient->query(
-            [
-                $this->notCachedQuery['action'] => $this->notCachedQuery['parameters'],
-            ],
-            $this->notCachedQuery['requestedFields']
+            $this->graphQlApiClient->buildQuery(
+                [
+                    $this->notCachedQuery['action'] => $this->notCachedQuery['parameters'],
+                ],
+                $this->notCachedQuery['requestedFields']
+            )
         );
 
         $this->assertEquals($this->notCachedResult['testGetObjects'], $result);
