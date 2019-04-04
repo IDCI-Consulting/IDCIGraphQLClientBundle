@@ -333,29 +333,24 @@ mutation {
 Cache
 -----
 
-Install [cache/adapter-bundle](https://packagist.org/packages/cache/adapter-bundle):
+Install [symfony/cache](https://packagist.org/packages/symfony/cache):
 
 ```shell
-$ composer require cache/adapter-bundle
+$ composer require symfony/cache
 ```
 
-Create new cache adapter provider(s) in your ```config/packages/cache_adapter.yaml``` ([official docs](http://www.php-cache.com/en/latest/symfony/adapter-bundle/))
+Create new cache adapter provider(s) in your ```config/packages/cache.yaml``` ([official docs](https://symfony.com/doc/current/components/cache))
 
 ```yaml
-cache_adapter:
-    providers:
-        my_first_provider:
-            factory: cache.factory.redis
-            options:
-                host: redis.example.com
-                port: 6379
-                database: 0
-        my_second_provider:
-            factory: cache.factory.redis
-            options:
-                host: redis.example.com
-                port: 6379
-                database: 1
+framework:
+  cache:
+    # Redis
+    app: cache.adapter.redis
+    default_redis_provider: "%env(resolve:REDIS_DSN)%"
+
+    pools:
+        cache.my_first_adapter: ~
+        cache.my_second_adapter: ~
 
 ```
 
@@ -367,17 +362,17 @@ idci_graphql_client:
     clients:
         my_client_one:
             http_client: 'eight_points_guzzle.client.my_guzzle_client_one'
-            cache: 'cache.provider.my_first_provider'
+            cache: 'cache.my_first_adapter'
             cache_ttl: 3600
         my_client_two:
             http_client: 'eight_points_guzzle.client.my_guzzle_client_two'
-            cache: 'cache.provider.my_second_provider'
+            cache: 'cache.my_second_adapter'
             cache_ttl: 60
 ```
 
 Now when your client execute a query the result will be inserted or retrieved from your cache provider
 
-You can also activate/desactivate cache for a specific environment by adding a new yaml configuration file in ```config/packages/dev/``` or ```config/packages/test/```, for example:
+You can also activate/deactivate cache for a specific environment by adding a new yaml configuration file in ```config/packages/dev/``` or ```config/packages/test/```, for example:
 
 ```yaml
 # config/packages/dev/idci_graphql_client.yaml
