@@ -60,6 +60,11 @@ class GraphQLApiClient implements GraphQLApiClientInterface
         return new GraphQLQuery(GraphQLQuery::QUERY_TYPE, $action, $requestedFields, $this);
     }
 
+    public function buildMutation($action, array $requestedFields): GraphQLQuery
+    {
+        return new GraphQLQuery(GraphQLQuery::MUTATION_TYPE, $action, $requestedFields, $this);
+    }
+
     public function query(GraphQLQuery $graphQlQuery, bool $cache = true): array
     {
         $graphQlQueryHash = $graphQlQuery->getHash();
