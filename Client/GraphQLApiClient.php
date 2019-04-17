@@ -3,7 +3,7 @@
 namespace IDCI\Bundle\GraphQLClientBundle\Client;
 
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\TransferException;
+use GuzzleHttp\Exception\RequestException;
 use IDCI\Bundle\GraphQLClientBundle\Query\GraphQLQuery;
 use IDCI\Bundle\GraphQLClientBundle\Query\GraphQLQueryBuilder;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
@@ -81,17 +81,28 @@ class GraphQLApiClient implements GraphQLApiClientInterface
                     'query' => $graphQlQuery->getGraphQlQuery(),
                 ],
             ]);
-        } catch (TransferException $e) {
-            throw new \RuntimeException(sprintf('Network Error: %s', $e->getMessage()), 0, $e);
+        } catch (RequestException $e) {
+            $response = $e->getResponse();
         }
 
         $result = json_decode($response->getBody(), true);
 
-        if (!isset($result['data']) || (isset($result['errors'][0]))) {
-            if (isset($result['errors'][0]['debugMessage'])) {
-                throw new \UnexpectedValueException($result['errors'][0]['debugMessage']);
+        if (!isset($result['data']) || isset($result['error']) || isset($result['errors'])) {
+            $error = isset($result['error']) ? $result['error'] : $result['errors'][0];
+            if (isset($error['exception'][0])) {
+                $exception = $error['exception'][0];
+                throw new \UnexpectedValueException(sprintf('%s: %s', $exception['class'], $exception['message']));
+            } else {
+                throw new \UnexpectedValueException(
+                    sprintf(
+                        '%s: %s',
+                        $error['message'],
+                        isset($error['debugMessage']) ? $error['debugMessage'] : $error['message']
+                    )
+                );
             }
-            throw new \UnexpectedValueException($result['errors'][0]['message']);
+
+            throw new \UnexpectedValueException('Unknown error');
         }
 
         if ($cache && null !== $this->cache) {
