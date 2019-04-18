@@ -109,6 +109,10 @@ class GraphQLQuery
 
     public function getResults($cache = true)
     {
+        if (self::MUTATION_TYPE === $this->type) {
+            $cache = false;
+        }
+
         return $this->client->query($this, $cache);
     }
 
