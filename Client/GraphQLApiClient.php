@@ -83,6 +83,10 @@ class GraphQLApiClient implements GraphQLApiClientInterface
             ]);
         } catch (RequestException $e) {
             $response = $e->getResponse();
+
+            if (null === $response) {
+                throw $e;
+            }
         }
 
         $result = json_decode($response->getBody(), true);
