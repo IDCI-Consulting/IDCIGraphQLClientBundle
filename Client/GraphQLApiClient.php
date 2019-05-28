@@ -50,6 +50,11 @@ class GraphQLApiClient implements GraphQLApiClientInterface
         }
     }
 
+    public function getHttpClient(): ClientInterface
+    {
+        return $this->httpClient;
+    }
+
     public function createQueryBuilder(): GraphQLQueryBuilder
     {
         return new GraphQLQueryBuilder($this);
