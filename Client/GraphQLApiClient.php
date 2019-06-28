@@ -70,7 +70,7 @@ class GraphQLApiClient implements GraphQLApiClientInterface
         return new GraphQLQuery(GraphQLQuery::MUTATION_TYPE, $action, $requestedFields, $this);
     }
 
-    public function query(GraphQLQuery $graphQlQuery, bool $cache = true): array
+    public function query(GraphQLQuery $graphQlQuery, bool $cache = true): ?array
     {
         $graphQlQueryHash = $graphQlQuery->getHash();
         if ($cache && null !== $this->cache && $this->cache->hasItem($graphQlQueryHash)) {
