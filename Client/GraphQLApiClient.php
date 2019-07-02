@@ -6,6 +6,7 @@ use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use IDCI\Bundle\GraphQLClientBundle\Query\GraphQLQuery;
 use IDCI\Bundle\GraphQLClientBundle\Query\GraphQLQueryBuilder;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 class GraphQLApiClient implements GraphQLApiClientInterface
@@ -25,10 +26,11 @@ class GraphQLApiClient implements GraphQLApiClientInterface
      */
     private $cacheTTL;
 
-    public function __construct(ClientInterface $httpClient, $cache = null, ?int $cacheTTL = 3600)
+    public function __construct(LoggerInterface $logger, ClientInterface $httpClient, $cache = null, ?int $cacheTTL = 3600)
     {
         $this->httpClient = $httpClient;
         $this->cacheTTL = $cacheTTL;
+        $this->logger = $logger;
 
         $this->setCache($cache);
     }
@@ -88,6 +90,11 @@ class GraphQLApiClient implements GraphQLApiClientInterface
             ]);
         } catch (RequestException $e) {
             $response = $e->getResponse();
+
+            $this->logger->error('Error in GraphQLApiClient', [
+                'query' => $graphQlQuery->getGraphQlQuery(),
+                'error' => $e->getMessage(),
+            ]);
 
             if (null === $response) {
                 throw $e;
