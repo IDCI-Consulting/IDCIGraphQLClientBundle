@@ -17,8 +17,7 @@ class GraphQLApiClient implements GraphQLApiClientInterface
     private $cache;
 
     /**
-     * @var ClientInterface
-     */
+     * @var ClientInterface */
     private $httpClient;
 
     /**
@@ -96,30 +95,28 @@ class GraphQLApiClient implements GraphQLApiClientInterface
                 'error' => $e->getMessage(),
             ]);
 
-            if (null === $response) {
-                throw $e;
-            }
+            return null;
         }
 
         $result = json_decode($response->getBody(), true);
 
-        if (!isset($result['data']) || isset($result['error']) || isset($result['errors'])) {
-            $error = isset($result['error']) ? $result['error'] : $result['errors'][0];
-            if (isset($error['exception'][0])) {
-                $exception = $error['exception'][0];
-                throw new \UnexpectedValueException(sprintf('%s: %s', $exception['class'], $exception['message']));
-            } else {
-                throw new \UnexpectedValueException(
-                    sprintf(
-                        '%s: %s',
-                        $error['message'],
-                        isset($error['debugMessage']) ? $error['debugMessage'] : $error['message']
-                    )
-                );
-            }
+        //if (!isset($result['data']) || isset($result['error']) || isset($result['errors'])) {
+        //    $error = isset($result['error']) ? $result['error'] : $result['errors'][0];
+        //    if (isset($error['exception'][0])) {
+        //        $exception = $error['exception'][0];
+        //        throw new \UnexpectedValueException(sprintf('%s: %s', $exception['class'], $exception['message']));
+        //    } else {
+        //        throw new \UnexpectedValueException(
+        //            sprintf(
+        //                '%s: %s',
+        //                $error['message'],
+        //                isset($error['debugMessage']) ? $error['debugMessage'] : $error['message']
+        //            )
+        //        );
+        //    }
 
-            throw new \UnexpectedValueException('Unknown error');
-        }
+        //    throw new \UnexpectedValueException('Unknown error');
+        //}
 
         if ($cache && null !== $this->cache) {
             $item = $this->cache->getItem($graphQlQueryHash);
