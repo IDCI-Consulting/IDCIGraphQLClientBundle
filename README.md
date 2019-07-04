@@ -44,7 +44,7 @@ Then you can call it by using the registry, for example:
 namespace App\Controller;
 
 use IDCI\Bundle\GraphQLClientBundle\Client\GraphQLApiClientRegistryInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class HomeController extends AbstractController

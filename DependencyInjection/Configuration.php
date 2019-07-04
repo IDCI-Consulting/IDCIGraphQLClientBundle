@@ -9,8 +9,9 @@ class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder('idci_graphql_client');
-        $treeBuilder->getRootNode()
+        $treeBuilder = new TreeBuilder();
+        $rootNode = $treeBuilder->root('idci_graphql_client');
+        $rootNode
             ->children()
                 ->booleanNode('cache_enabled')->defaultFalse()->end()
                 ->arrayNode('clients')
