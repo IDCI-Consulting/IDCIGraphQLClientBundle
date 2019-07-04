@@ -2,13 +2,15 @@
 
 namespace IDCI\Bundle\GraphQLClientBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
-class PurgeGraphQLCacheCommand extends ContainerAwareCommand
+class PurgeGraphQLCacheCommand extends Command
 {
+    private $container;
+
     public function __construct()
     {
         parent::__construct();
@@ -55,5 +57,19 @@ EOT
         $this->getContainer()->get($clients[$clientName]['cache'])->commit();
 
         $output->writeln(sprintf('<info>Cache cleared for client "%s"</info>', $clientName));
+    }
+
+    private function getContainer()
+    {
+        if (null === $this->container) {
+            $application = $this->getApplication();
+            if (null === $application) {
+                throw new \LogicException('The container cannot be retrieved as the application instance is not yet set.');
+            }
+
+            $this->container = $application->getKernel()->getContainer();
+        }
+
+        return $this->container;
     }
 }
