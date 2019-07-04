@@ -89,37 +89,17 @@ class GraphQLApiClient implements GraphQLApiClientInterface
                 ],
             ]);
         } catch (RequestException $e) {
-            $response = $e->getResponse();
-
             $this->logger->error('Error in GraphQLApiClient', [
                 'query' => $graphQlQuery->getGraphQlQuery(),
                 'error' => $e->getMessage(),
+                'response' => $e->getResponse(),
+                'body' => null !== $e->getResponse() ? (string) $e->getResponse()->getBody() : null,
             ]);
 
-            if (null === $response) {
-                throw $e;
-            }
+            throw $e;
         }
 
         $result = json_decode($response->getBody(), true);
-
-        if (!isset($result['data']) || isset($result['error']) || isset($result['errors'])) {
-            $error = isset($result['error']) ? $result['error'] : $result['errors'][0];
-            if (isset($error['exception'][0])) {
-                $exception = $error['exception'][0];
-                throw new \UnexpectedValueException(sprintf('%s: %s', $exception['class'], $exception['message']));
-            } else {
-                throw new \UnexpectedValueException(
-                    sprintf(
-                        '%s: %s',
-                        $error['message'],
-                        isset($error['debugMessage']) ? $error['debugMessage'] : $error['message']
-                    )
-                );
-            }
-
-            throw new \UnexpectedValueException('Unknown error');
-        }
 
         if ($cache && null !== $this->cache) {
             $item = $this->cache->getItem($graphQlQueryHash);
