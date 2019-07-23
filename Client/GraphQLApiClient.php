@@ -101,7 +101,7 @@ class GraphQLApiClient implements GraphQLApiClientInterface
 
         $result = json_decode($response->getBody(), true);
 
-        if (null === $result || null === $result['data'][$graphQlQuery->getAction()]) {
+        if (null === $result || !isset($result['data']) || null === $result['data'][$graphQlQuery->getAction()]) {
             $this->logger->error('Warning in GraphQLApiClient, no value returned. Probably an error has been encountred.', [
                 'query' => $graphQlQuery->getGraphQlQuery(),
                 'result' => $result,
