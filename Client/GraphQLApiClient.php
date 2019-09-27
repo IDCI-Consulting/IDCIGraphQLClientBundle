@@ -80,14 +80,11 @@ class GraphQLApiClient implements GraphQLApiClientInterface
         }
 
         try {
-            $response = $this->httpClient->request('POST', '', [
+            $response = $this->httpClient->request('POST', '', array_merge([
                 'headers' => [
                     'Accept-Encoding' => 'gzip',
                 ],
-                'form_params' => [
-                    'query' => $graphQlQuery->getGraphQlQuery(),
-                ],
-            ]);
+            ], $this->buildRequestParams($graphQlQuery)));
         } catch (RequestException $e) {
             $this->logger->error('Error in GraphQLApiClient', [
                 'query' => $graphQlQuery->getGraphQlQuery(),
@@ -118,5 +115,35 @@ class GraphQLApiClient implements GraphQLApiClientInterface
         }
 
         return $result['data'][$graphQlQuery->getAction()];
+    }
+
+    private function buildRequestParams(GraphQLQuery $graphQlQuery): array
+    {
+        if (!$graphQlQuery->hasFiles()) {
+            return [
+                'form_params' => [
+                    'query' => $graphQlQuery->getGraphQlQuery(),
+                ],
+            ];
+        }
+
+        $formParams = [
+            'multipart' => [
+                [
+                    'name' => 'query',
+                    'contents' => $graphQlQuery->getGraphQlQuery(),
+                ],
+            ],
+        ];
+
+        foreach ($graphQlQuery->getFiles() as $file) {
+            $formParams['multipart'][] = [
+                'name' => 'files[]',
+                'contents' => fopen((string) $file, 'r'),
+                'headers' => ['Content-Type' => $file->getMimeType()],
+            ];
+        }
+
+        return $formParams;
     }
 }

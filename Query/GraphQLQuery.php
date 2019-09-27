@@ -5,6 +5,7 @@ namespace IDCI\Bundle\GraphQLClientBundle\Query;
 use GraphQL\Graph;
 use GraphQL\Mutation;
 use IDCI\Bundle\GraphQLClientBundle\Client\GraphQLApiClientInterface;
+use Symfony\Component\HttpFoundation\File\File;
 
 class GraphQLQuery
 {
@@ -41,6 +42,11 @@ class GraphQLQuery
      * @var GraphQLApiClientInterface
      */
     private $client;
+
+    /**
+     * @var array
+     */
+    private $files;
 
     public function __construct(string $type, $action, array $requestedFields, GraphQLApiClientInterface $client)
     {
@@ -85,6 +91,23 @@ class GraphQLQuery
         array_walk($requestedFields, [$this, 'buildGraph'], $graphQlQuery);
 
         $this->query = $this->decodeGraphQlQuery($graphQlQuery);
+    }
+
+    public function addFile(File $file): self
+    {
+        $this->files[] = $file;
+
+        return $this;
+    }
+
+    public function getFiles(): array
+    {
+        return $this->files;
+    }
+
+    public function hasFiles(): bool
+    {
+        return !empty($this->files);
     }
 
     public function getAction(): string
