@@ -90,7 +90,7 @@ class GraphQLQuery
 
         array_walk($requestedFields, [$this, 'buildGraph'], $graphQlQuery);
 
-        $this->query = $this->decodeGraphQlQuery($graphQlQuery);
+        $this->query = $graphQlQuery;
     }
 
     public function addFile(File $file): self
@@ -137,13 +137,6 @@ class GraphQLQuery
         }
 
         return $this->client->query($this, $cache);
-    }
-
-    private function decodeGraphQlQuery(string $graphQlQuery)
-    {
-        return preg_replace_callback('/\\\\u([a-f0-9]{4})/', function ($param) {
-            return iconv('UCS-4LE', 'UTF-8', pack('V', hexdec(sprintf('U%s', $param[0]))));
-        }, $graphQlQuery);
     }
 
     public function getHash()
