@@ -90,7 +90,7 @@ class GraphQLQuery
 
         array_walk($requestedFields, [$this, 'buildGraph'], $graphQlQuery);
 
-        $this->query = $graphQlQuery;
+        $this->query = $this->decodeGraphQlQuery($graphQlQuery);
     }
 
     public function addFile(File $file): self
@@ -159,5 +159,12 @@ class GraphQLQuery
         } elseif ('_parameters' !== $key) {
             array_walk($field, [$this, 'buildGraph'], $graphQlQuery->$key);
         }
+    }
+
+    private function decodeGraphQlQuery(string $graphQlQuery)
+    {
+        return preg_replace_callback('/(\\\\|\\\\\\\\)u([a-f0-9]{4})/', function ($param) {
+            return json_decode(sprintf('["%s"]', str_replace('\\\\', '\\', $param[0])))[0];
+        }, $graphQlQuery);
     }
 }
