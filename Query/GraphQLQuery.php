@@ -24,6 +24,11 @@ class GraphQLQuery
     private $action;
 
     /**
+     * @var string
+     */
+    private $endpoint;
+
+    /**
      * @var array
      */
     private $actionParameters;
@@ -113,6 +118,23 @@ class GraphQLQuery
     public function getAction(): string
     {
         return $this->action;
+    }
+
+    public function hasEndpoint(): bool
+    {
+        return null !== $this->endpoint;
+    }
+
+    public function getEndpoint(): ?string
+    {
+        return $this->endpoint;
+    }
+
+    public function setEndpoint(string $endpoint): self
+    {
+        $this->endpoint = $endpoint;
+
+        return $this;
     }
 
     public function getActionParameters(): array

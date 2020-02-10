@@ -80,7 +80,7 @@ class GraphQLApiClient implements GraphQLApiClientInterface
         }
 
         try {
-            $response = $this->httpClient->request('POST', '', array_merge([
+            $response = $this->httpClient->request('POST', $graphQlQuery->hasEndpoint() ? $graphQlQuery->getEndpoint() : '', array_merge([
                 'headers' => [
                     'Accept-Encoding' => 'gzip',
                 ],
