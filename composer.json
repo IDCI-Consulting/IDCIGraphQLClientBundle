@@ -22,7 +22,8 @@
         "symfony/monolog-bundle": "^3.3"
     },
     "suggest": {
-        "cache/adapter-bundle": "^1.2"
+        "cache/adapter-bundle": "^1.2",
+        "liip/monitor-bundle": "^2.12"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.0"

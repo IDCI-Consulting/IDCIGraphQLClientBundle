@@ -380,6 +380,28 @@ idci_graphql_client:
     cache_enabled: false
 ```
 
+Liip Monitor Bundle
+-------------------
+
+Install LiipMonitorBundle
+
+```sh
+$ composer req liip/monitor-bundle
+```
+
+Enable the checker in your service configuration
+
+```yaml
+IDCI\Bundle\GraphQLClientBundle\Check\GraphQLApiCheck:
+    autoconfigure: false
+    arguments:
+        $client: '@eight_points_guzzle.client.graphql_api_entrypoint'
+        $name: 'My API Name'
+    tags:
+        - { name: liip_monitor.check, group: api }
+
+```
+
 Command
 -------
 
