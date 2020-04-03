@@ -22,7 +22,7 @@ if (interface_exists(CheckInterface::class)) {
          */
         private $name;
 
-        public function __construct(ClientInterface $client, string $name)
+        public function __construct(?ClientInterface $client = null, ?string $name = null)
         {
             $this->client = $client;
             $this->name = $name;
@@ -30,6 +30,10 @@ if (interface_exists(CheckInterface::class)) {
 
         public function check()
         {
+            if (null === $this->client) {
+                return new Warning('The checker is misconfigured: guzzle client is null.');
+            }
+
             try {
                 $response = $this->client->request('POST', '', [
                     'headers' => [
