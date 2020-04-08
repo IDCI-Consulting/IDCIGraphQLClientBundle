@@ -5,6 +5,7 @@ namespace IDCI\Bundle\GraphQLClientBundle\Check;
 use GuzzleHttp\ClientInterface;
 use Laminas\Diagnostics\Check\CheckInterface;
 use Laminas\Diagnostics\Result\Failure;
+use Laminas\Diagnostics\Result\Skip;
 use Laminas\Diagnostics\Result\Success;
 use Laminas\Diagnostics\Result\Warning;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,7 +32,7 @@ if (interface_exists(CheckInterface::class)) {
         public function check()
         {
             if (null === $this->client) {
-                return new Warning('The checker is misconfigured: guzzle client is null.');
+                return new Skip('Skipped - The checker is misconfigured: guzzle client is null.');
             }
 
             try {
