@@ -60,9 +60,7 @@ class GraphQLQuery
         }
 
         if (self::MUTATION_TYPE !== $type && self::QUERY_TYPE !== $type) {
-            throw new \InvalidArgumentException(
-                sprintf('query type must be a "%s" or "%s"', self::MUTATION_TYPE, self::QUERY_TYPE)
-            );
+            throw new \InvalidArgumentException(sprintf('query type must be a "%s" or "%s"', self::MUTATION_TYPE, self::QUERY_TYPE));
         }
 
         $this->type = $type;
@@ -169,17 +167,39 @@ class GraphQLQuery
     private function buildGraph($field, $key, &$graphQlQuery)
     {
         if (!is_array($field)) {
+            if (in_array($key, ['_parameters', '_alias'], true)) {
+                return;
+            }
+
             return $graphQlQuery->use($field);
         }
 
         if (array_key_exists('_parameters', $field)) {
-            array_walk($field, [$this, 'buildGraph'], $graphQlQuery->$key($field['_parameters']));
-        } elseif ('_fragments' === $key) {
+            if (array_key_exists('_alias', $field)) {
+                $alias = $field['_alias'];
+
+                return array_walk($field, [$this, 'buildGraph'], $graphQlQuery->$alias($field['_parameters'])->alias($key));
+            }
+
+            return array_walk($field, [$this, 'buildGraph'], $graphQlQuery->$key($field['_parameters']));
+        }
+
+        if ('_fragments' === $key) {
             foreach ($field as $fragment => $subfield) {
                 array_walk($subfield, [$this, 'buildGraph'], $graphQlQuery->on($fragment));
             }
-        } elseif ('_parameters' !== $key) {
-            array_walk($field, [$this, 'buildGraph'], $graphQlQuery->$key);
+
+            return;
+        }
+
+        if (!in_array($key, ['_parameters', '_alias'])) {
+            if (array_key_exists('_alias', $field)) {
+                $alias = $field['_alias'];
+
+                return array_walk($field, [$this, 'buildGraph'], $graphQlQuery->$alias->alias($key));
+            }
+
+            return array_walk($field, [$this, 'buildGraph'], $graphQlQuery->$key);
         }
     }
 

@@ -245,6 +245,55 @@ will generate
 }
 ```
 
+#### Aliases
+
+```php
+<?php
+
+$query = $graphQlApiClientRegistry->get('my_client')->buildQuery(
+    'child',
+    [
+        'name',
+        'age',
+        'toys' => [
+            '_alias' => 'green_toys',
+            '_parameters' => [ // reserved argument
+                'color' => 'green'
+            ],
+            'name',
+            'color',
+        ],
+        'toys' => [
+            '_alias' => 'blue_toys',
+            '_parameters' => [ // reserved argument
+                'color' => 'blue'
+            ],
+            'name',
+            'color',
+        ],
+    ]
+)->getGraphQlQuery();
+```
+
+will generate
+
+```
+{
+  child {
+    name
+    age
+    green_toys: toys(color: "green") {
+      name
+      color
+    }
+    blue_toys: toys(color: "blue") {
+      name
+      color
+    }
+  }
+}
+```
+
 #### Mutations
 
 ```php
