@@ -164,7 +164,7 @@ class GraphQLQuery
         return hash('sha1', $this->query);
     }
 
-    private function buildGraph($field, $key, &$graphQlQuery)
+    private function buildGraph($field, $key, $graphQlQuery)
     {
         if (!is_array($field)) {
             if (in_array($key, ['_parameters', '_alias'], true)) {
