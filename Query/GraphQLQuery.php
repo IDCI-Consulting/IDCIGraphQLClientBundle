@@ -118,6 +118,13 @@ class GraphQLQuery
         return $this->action;
     }
 
+    public function setAction(string $action): self
+    {
+        $this->action = $action;
+
+        return $this;
+    }
+
     public function hasEndpoint(): bool
     {
         return null !== $this->endpoint;
@@ -148,6 +155,13 @@ class GraphQLQuery
     public function getGraphQLQuery(): string
     {
         return $this->query;
+    }
+
+    public function setGraphQLQuery(string $query): self
+    {
+        $this->query = $query;
+
+        return $this;
     }
 
     public function getResults($cache = true)

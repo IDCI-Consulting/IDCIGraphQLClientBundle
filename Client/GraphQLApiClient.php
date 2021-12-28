@@ -11,6 +11,8 @@ use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 class GraphQLApiClient implements GraphQLApiClientInterface
 {
+    const DEFAULT_CACHE_TTL = 3600;
+
     /**
      * @var RedisCacheHandler
      */
@@ -26,7 +28,7 @@ class GraphQLApiClient implements GraphQLApiClientInterface
      */
     private $cacheTTL;
 
-    public function __construct(LoggerInterface $logger, ClientInterface $httpClient, $cache = null, ?int $cacheTTL = 3600)
+    public function __construct(LoggerInterface $logger, ClientInterface $httpClient, $cache = null, ?int $cacheTTL = self::DEFAULT_CACHE_TTL)
     {
         $this->httpClient = $httpClient;
         $this->cacheTTL = $cacheTTL;
@@ -43,13 +45,23 @@ class GraphQLApiClient implements GraphQLApiClientInterface
             }
 
             if (!$cache instanceof AdapterInterface) {
-                throw new \UnexpectedValueException(
-                    sprintf('The client\'s cache adapter must implement %s.', AdapterInterface::class)
-                );
+                throw new \UnexpectedValueException(sprintf('The client\'s cache adapter must implement %s.', AdapterInterface::class));
             }
 
             $this->cache = $cache;
         }
+    }
+
+    public function getCacheTTL(): int
+    {
+        return $this->cacheTTL;
+    }
+
+    public function setCacheTTL(int $cacheTTL): self
+    {
+        $this->cacheTTL = $cacheTTL;
+
+        return $this;
     }
 
     public function getHttpClient(): ClientInterface
@@ -103,6 +115,10 @@ class GraphQLApiClient implements GraphQLApiClientInterface
                 'query' => $graphQlQuery->getGraphQlQuery(),
                 'result' => $result,
             ]);
+        }
+
+        if (isset($result['errors']) && !empty($result['errors'])) {
+            throw new \Exception(sprintf('Error occuring during the execution of GraphQL query "%s". Result: %s', $graphQlQuery->getGraphQlQuery(), json_encode($result)));
         }
 
         if ($cache && null !== $this->cache) {

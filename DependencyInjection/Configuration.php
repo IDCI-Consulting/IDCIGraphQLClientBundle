@@ -2,6 +2,7 @@
 
 namespace IDCI\Bundle\GraphQLClientBundle\DependencyInjection;
 
+use IDCI\Bundle\GraphQLClientBundle\Client\GraphQLApiClient;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -18,7 +19,7 @@ class Configuration implements ConfigurationInterface
                         ->children()
                             ->scalarNode('http_client')->isRequired()->cannotBeEmpty()->end()
                             ->scalarNode('cache')->end()
-                            ->scalarNode('cache_ttl')->defaultValue(3600)->end()
+                            ->scalarNode('cache_ttl')->defaultValue(GraphQLApiClient::DEFAULT_CACHE_TTL)->end()
                         ->end()
                     ->end()
                 ->end()
