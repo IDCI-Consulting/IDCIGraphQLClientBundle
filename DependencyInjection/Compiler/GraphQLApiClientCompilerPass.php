@@ -29,11 +29,11 @@ class GraphQLApiClientCompilerPass implements CompilerPassInterface
                 throw new \InvalidArgumentException(sprintf('You must define a http client in graph ql client with alias %s under %s', $configuration['http_client'], $servicesRootConfigurationName));
             }
 
-            $serviceDefinition->replaceArgument(1, $container->getDefinition($configuration['http_client']));
+            $serviceDefinition->replaceArgument('$httpClient', $container->getDefinition($configuration['http_client']));
 
             if (isset($configuration['cache'])) {
-                $serviceDefinition->replaceArgument(2, $container->getDefinition($configuration['cache']));
-                $serviceDefinition->replaceArgument(3, $container->getParameter('idci_graphql_client.cache_enabled') ? $configuration['cache_ttl'] : 0);
+                $serviceDefinition->replaceArgument('$cache', $container->getDefinition($configuration['cache']));
+                $serviceDefinition->replaceArgument('$cacheTTL', $container->getParameter('idci_graphql_client.cache_enabled') ? $configuration['cache_ttl'] : 0);
             }
 
             $serviceName = sprintf('%s.%s', $servicesRootConfigurationName, $alias);

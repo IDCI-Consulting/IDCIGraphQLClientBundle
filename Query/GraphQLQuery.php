@@ -53,6 +53,11 @@ class GraphQLQuery
      */
     private $files;
 
+    /**
+     * @var string|null
+     */
+    private $locale = null;
+
     public function __construct(string $type, $action, array $requestedFields, GraphQLApiClientInterface $client)
     {
         if (!is_array($action) && !is_string($action)) {
@@ -138,6 +143,18 @@ class GraphQLQuery
     public function setEndpoint(string $endpoint): self
     {
         $this->endpoint = $endpoint;
+
+        return $this;
+    }
+
+    public function getLocale(): ?string
+    {
+        return $this->locale;
+    }
+
+    public function setLocale(?string $locale): self
+    {
+        $this->locale = $locale;
 
         return $this;
     }

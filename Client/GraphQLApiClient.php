@@ -8,15 +8,16 @@ use IDCI\Bundle\GraphQLClientBundle\Query\GraphQLQuery;
 use IDCI\Bundle\GraphQLClientBundle\Query\GraphQLQueryBuilder;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class GraphQLApiClient implements GraphQLApiClientInterface
 {
     const DEFAULT_CACHE_TTL = 3600;
 
     /**
-     * @var RedisCacheHandler
+     * @var LoggerInterface
      */
-    private $cache;
+    private $logger;
 
     /**
      * @var ClientInterface
@@ -24,17 +25,32 @@ class GraphQLApiClient implements GraphQLApiClientInterface
     private $httpClient;
 
     /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
+    /**
+     * @var RedisCacheHandler
+     */
+    private $cache;
+
+    /**
      * @var int
      */
     private $cacheTTL;
 
-    public function __construct(LoggerInterface $logger, ClientInterface $httpClient, $cache = null, ?int $cacheTTL = self::DEFAULT_CACHE_TTL)
-    {
-        $this->httpClient = $httpClient;
-        $this->cacheTTL = $cacheTTL;
+    public function __construct(
+        LoggerInterface $logger,
+        ClientInterface $httpClient,
+        TranslatorInterface $translator,
+        $cache = null,
+        ?int $cacheTTL = self::DEFAULT_CACHE_TTL
+    ) {
         $this->logger = $logger;
-
+        $this->httpClient = $httpClient;
+        $this->translator = $translator;
         $this->setCache($cache);
+        $this->cacheTTL = $cacheTTL;
     }
 
     private function setCache($cache)
@@ -95,6 +111,7 @@ class GraphQLApiClient implements GraphQLApiClientInterface
             $response = $this->httpClient->request('POST', $graphQlQuery->hasEndpoint() ? $graphQlQuery->getEndpoint() : '', array_merge([
                 'headers' => [
                     'Accept-Encoding' => 'gzip',
+                    'Accept-Language' => $graphQlQuery->getLocale() ?? $this->translator->getLocale(),
                 ],
             ], $this->buildRequestParams($graphQlQuery)));
         } catch (RequestException $e) {

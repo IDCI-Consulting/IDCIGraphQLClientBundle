@@ -11,6 +11,5 @@ services:
 
     IDCI\Bundle\GraphQLClientBundle\Client\GraphQLApiClient:
         abstract: true
-        arguments: ['@logger', null, null, null]
 
     IDCI\Bundle\GraphQLClientBundle\Client\GraphQLApiClientRegistry: ~
