@@ -236,6 +236,8 @@ class GraphQLQuery
 
     private function decodeGraphQlQuery(string $graphQlQuery)
     {
+        $graphQlQuery = preg_replace('/{\n\s*}/', '', $graphQlQuery);
+
         return preg_replace_callback('/(\\\\|\\\\\\\\)u([a-f0-9]{4})/', function ($param) {
             return json_decode(sprintf('["%s"]', str_replace('\\\\', '\\', $param[0])))[0];
         }, $graphQlQuery);
