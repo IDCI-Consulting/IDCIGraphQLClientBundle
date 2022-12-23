@@ -5,6 +5,7 @@ namespace IDCI\Bundle\GraphQLClientBundle;
 use IDCI\Bundle\GraphQLClientBundle\DependencyInjection\Compiler\GraphQLApiClientCompilerPass;
 use IDCI\Bundle\GraphQLClientBundle\DependencyInjection\IDCIGraphQLClientExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class IDCIGraphQLClientBundle extends Bundle
@@ -16,7 +17,7 @@ class IDCIGraphQLClientBundle extends Bundle
         $container->addCompilerPass(new GraphQLApiClientCompilerPass());
     }
 
-    public function getContainerExtension()
+    public function getContainerExtension(): ExtensionInterface
     {
         return new IDCIGraphQLClientExtension();
     }
