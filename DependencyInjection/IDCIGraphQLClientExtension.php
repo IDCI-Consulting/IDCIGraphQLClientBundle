@@ -21,7 +21,7 @@ class IDCIGraphQLClientExtension extends Extension
         $container->setParameter('idci_graphql_client.clients', $config['clients']);
     }
 
-    public function getAlias()
+    public function getAlias(): string
     {
         return 'idci_graphql_client';
     }

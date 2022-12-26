@@ -30,7 +30,7 @@ class GraphQLApiClient implements GraphQLApiClientInterface
     private $translator;
 
     /**
-     * @var RedisCacheHandler
+     * @var AdapterInterface
      */
     private $cache;
 
