@@ -4,6 +4,7 @@ namespace IDCI\Bundle\GraphQLClientBundle\Client;
 
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
+use IDCI\Bundle\GraphQLClientBundle\Exception\GraphQLResultException;
 use IDCI\Bundle\GraphQLClientBundle\Query\GraphQLQuery;
 use IDCI\Bundle\GraphQLClientBundle\Query\GraphQLQueryBuilder;
 use Psr\Log\LoggerInterface;
@@ -127,15 +128,12 @@ class GraphQLApiClient implements GraphQLApiClientInterface
 
         $result = json_decode($response->getBody(), true);
 
-        if (null === $result || !isset($result['data']) || null === $result['data'][$graphQlQuery->getAction()]) {
-            $this->logger->warning('Warning in GraphQLApiClient, no value returned. Probably an error has been encountred.', [
-                'query' => $graphQlQuery->getGraphQlQuery(),
-                'result' => $result,
-            ]);
+        if (null === $result || !isset($result['data']) || null === $result['data']) {
+            throw new GraphQLResultException($graphQlQuery->getGraphQlQuery(), $result ?? []);
         }
 
         if (isset($result['errors']) && !empty($result['errors'])) {
-            throw new \Exception(sprintf('Error occuring during the execution of GraphQL query "%s". Result: %s', $graphQlQuery->getGraphQlQuery(), json_encode($result)));
+            throw new GraphQLResultException($graphQlQuery->getGraphQlQuery(), $result['errors']);
         }
 
         if ($cache && null !== $this->cache) {
