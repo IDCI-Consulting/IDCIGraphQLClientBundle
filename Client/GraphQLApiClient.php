@@ -128,12 +128,13 @@ class GraphQLApiClient implements GraphQLApiClientInterface
 
         $result = json_decode($response->getBody(), true);
 
-        if (null === $result || !isset($result['data']) || null === $result['data']) {
+        if (
+            null === $result ||
+            !isset($result['data']) ||
+            null === $result['data'] ||
+            isset($result['errors']) && !empty($result['errors'])
+        ) {
             throw new GraphQLResultException($graphQlQuery->getGraphQlQuery(), $result ?? []);
-        }
-
-        if (isset($result['errors']) && !empty($result['errors'])) {
-            throw new GraphQLResultException($graphQlQuery->getGraphQlQuery(), $result['errors']);
         }
 
         if ($cache && null !== $this->cache) {
