@@ -19,7 +19,6 @@ class Configuration implements ConfigurationInterface
                         ->children()
                             ->scalarNode('http_client')->isRequired()->cannotBeEmpty()->end()
                             ->scalarNode('cache')->end()
-                            ->scalarNode('cache_ttl')->defaultValue(GraphQLApiClient::DEFAULT_CACHE_TTL)->end()
                         ->end()
                     ->end()
                 ->end()

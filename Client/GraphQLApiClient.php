@@ -13,8 +13,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class GraphQLApiClient implements GraphQLApiClientInterface
 {
-    const DEFAULT_CACHE_TTL = 3600;
-
     /**
      * @var LoggerInterface
      */
@@ -35,23 +33,16 @@ class GraphQLApiClient implements GraphQLApiClientInterface
      */
     private $cache;
 
-    /**
-     * @var int
-     */
-    private $cacheTTL;
-
     public function __construct(
         LoggerInterface $logger,
         ClientInterface $httpClient,
         TranslatorInterface $translator,
         $cache = null,
-        ?int $cacheTTL = self::DEFAULT_CACHE_TTL
     ) {
         $this->logger = $logger;
         $this->httpClient = $httpClient;
         $this->translator = $translator;
         $this->setCache($cache);
-        $this->cacheTTL = $cacheTTL;
     }
 
     private function setCache($cache)
@@ -67,18 +58,6 @@ class GraphQLApiClient implements GraphQLApiClientInterface
 
             $this->cache = $cache;
         }
-    }
-
-    public function getCacheTTL(): int
-    {
-        return $this->cacheTTL;
-    }
-
-    public function setCacheTTL(int $cacheTTL): self
-    {
-        $this->cacheTTL = $cacheTTL;
-
-        return $this;
     }
 
     public function getHttpClient(): ClientInterface
@@ -141,7 +120,6 @@ class GraphQLApiClient implements GraphQLApiClientInterface
             $item = $this->cache->getItem($graphQlQueryHash);
 
             $item->set($result['data'][$graphQlQuery->getAction()]);
-            $item->expiresAfter($this->cacheTTL);
 
             $this->cache->save($item);
         }

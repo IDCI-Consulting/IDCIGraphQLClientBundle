@@ -33,7 +33,6 @@ class GraphQLApiClientCompilerPass implements CompilerPassInterface
 
             if (isset($configuration['cache'])) {
                 $serviceDefinition->replaceArgument('$cache', $container->getDefinition($configuration['cache']));
-                $serviceDefinition->replaceArgument('$cacheTTL', $container->getParameter('idci_graphql_client.cache_enabled') ? $configuration['cache_ttl'] : 0);
             }
 
             $serviceName = sprintf('%s.%s', $servicesRootConfigurationName, $alias);

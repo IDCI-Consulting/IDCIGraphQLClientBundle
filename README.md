@@ -412,11 +412,9 @@ idci_graphql_client:
         my_client_one:
             http_client: 'eight_points_guzzle.client.my_guzzle_client_one'
             cache: 'cache.my_first_adapter'
-            cache_ttl: 3600
         my_client_two:
             http_client: 'eight_points_guzzle.client.my_guzzle_client_two'
             cache: 'cache.my_second_adapter'
-            cache_ttl: 60
 ```
 
 Now when your client execute a query the result will be inserted or retrieved from your cache provider
