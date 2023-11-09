@@ -33,7 +33,6 @@ class QueryCommand extends Command
             ->setDescription('Execute graphql query')
             ->addArgument('query', InputArgument::REQUIRED, 'The graphql query which will be executed')
             ->addOption('cache', null, InputOption::VALUE_NONE, 'If the query should be stored in cache')
-            ->addOption('cache-ttl', null, InputOption::VALUE_REQUIRED, 'The ttl which query should be stored in cache.', GraphQLApiClient::DEFAULT_CACHE_TTL)
             ->setHelp('Execute graphql query')
             ->setHelp(
                 <<<EOT
@@ -64,10 +63,6 @@ EOT
         $client = $clients[$clientName];
 
         $output->writeln(sprintf('<info>Executing query for client "%s"</info>', $clientName));
-
-        if ($input->getOption('cache')) {
-            $client->setCacheTTL($input->getOption('cache-ttl'));
-        }
 
         $query = GraphQLQueryFactory::fromString($input->getArgument('query'));
 

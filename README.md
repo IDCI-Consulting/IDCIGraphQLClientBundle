@@ -36,6 +36,21 @@ idci_graphql_client:
             http_client: 'eight_points_guzzle.client.my_guzzle_client_two'
 ```
 
+```yaml
+framework:
+    cache:
+        my_provider_one: "%env(resolve:MY_CACHE_DSN)%"
+        pools:
+            cache.my_cache_one:
+                adapter: app.cache.my_adapter_one.my_cache_one
+                default_lifetime: 600
+                public: true
+            cache.my_cache_two:
+                adapter: app.cache.my_adapter_two.my_cache_two
+                default_lifetime: 3600
+                public: true
+```
+
 Then you can call it by using the registry, for example:
 
 ```php
@@ -412,11 +427,9 @@ idci_graphql_client:
         my_client_one:
             http_client: 'eight_points_guzzle.client.my_guzzle_client_one'
             cache: 'cache.my_first_adapter'
-            cache_ttl: 3600
         my_client_two:
             http_client: 'eight_points_guzzle.client.my_guzzle_client_two'
             cache: 'cache.my_second_adapter'
-            cache_ttl: 60
 ```
 
 Now when your client execute a query the result will be inserted or retrieved from your cache provider
