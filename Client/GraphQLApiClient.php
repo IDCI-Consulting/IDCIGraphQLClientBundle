@@ -37,7 +37,7 @@ class GraphQLApiClient implements GraphQLApiClientInterface
         LoggerInterface $logger,
         ClientInterface $httpClient,
         TranslatorInterface $translator,
-        $cache = null,
+        $cache = null
     ) {
         $this->logger = $logger;
         $this->httpClient = $httpClient;
