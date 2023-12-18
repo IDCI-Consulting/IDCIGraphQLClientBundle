@@ -89,10 +89,13 @@ class GraphQLApiClient implements GraphQLApiClientInterface
 
         try {
             $response = $this->httpClient->request('POST', $graphQlQuery->hasEndpoint() ? $graphQlQuery->getEndpoint() : '', array_merge([
-                'headers' => [
-                    'Accept-Encoding' => 'gzip',
-                    'Accept-Language' => $graphQlQuery->getLocale() ?? $this->translator->getLocale(),
-                ],
+                'headers' => array_merge(
+                    [
+                        'Accept-Encoding' => 'gzip',
+                        'Accept-Language' => $graphQlQuery->getLocale() ?? $this->translator->getLocale(),
+                    ],
+                    $graphQlQuery->getHeaders()
+                ),
             ], $this->buildRequestParams($graphQlQuery)));
         } catch (RequestException $e) {
             $this->logger->error('Error in GraphQLApiClient', [

@@ -51,7 +51,12 @@ class GraphQLQuery
     /**
      * @var array
      */
-    private $files;
+    private $files = [];
+
+    /**
+     * @var array
+     */
+    private $headers = [];
 
     /**
      * @var string|null
@@ -116,6 +121,32 @@ class GraphQLQuery
     public function hasFiles(): bool
     {
         return !empty($this->files);
+    }
+
+    public function getHeaders(): array
+    {
+        return $this->headers;
+    }
+
+    public function setHeaders(array $headers): self
+    {
+        $this->headers = $headers;
+
+        return $this;
+    }
+
+    public function addHeader(string $key, $value): self
+    {
+        $this->headers[$key] = $value;
+
+        return $this;
+    }
+
+    public function removeHeader(string $key): self
+    {
+        unset($this->headers[$key]);
+
+        return $this;
     }
 
     public function getAction(): string
