@@ -19,7 +19,6 @@
         "symfony/framework-bundle": "^4.0 || ^5.0 || ^6.0"
     },
     "suggest": {
-        "liip/monitor-bundle": "^2.12",
         "symfony/cache": "^4.0 || ^5.0 || ^6.0"
     },
     "require-dev": {

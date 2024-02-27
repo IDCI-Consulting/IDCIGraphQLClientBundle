@@ -434,34 +434,12 @@ idci_graphql_client:
 
 Now when your client execute a query the result will be inserted or retrieved from your cache provider
 
-You can also activate/deactivate cache for a specific environment by adding a new yaml configuration file in ```config/packages/dev/``` or ```config/packages/test/```, for example:
+You can also activate/deactivate cache for a specific environment for example:
 
 ```yaml
-# config/packages/dev/idci_graphql_client.yaml
-idci_graphql_client:
-    cache_enabled: false
-```
-
-Liip Monitor Bundle
--------------------
-
-Install LiipMonitorBundle
-
-```sh
-$ composer req liip/monitor-bundle
-```
-
-Enable the checker in your service configuration
-
-```yaml
-IDCI\Bundle\GraphQLClientBundle\Check\GraphQLApiCheck:
-    autoconfigure: false
-    arguments:
-        $client: '@eight_points_guzzle.client.graphql_api_entrypoint'
-        $name: 'My API Name'
-    tags:
-        - { name: liip_monitor.check, group: api }
-
+when@dev:
+    idci_graphql_client:
+        cache_enabled: false
 ```
 
 Command
@@ -470,5 +448,6 @@ Command
 You can select which cache you want purged by using
 
 ```shell
-$ php bin/console cache:graphql:clear
+$ php bin/console cache:pool:clear cache.my_first_adapter
+$ php bin/console cache:pool:clear cache.my_second_adapter
 ```
