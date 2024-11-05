@@ -223,7 +223,16 @@ class GraphQLQuery
 
     public function getHash()
     {
-        return hash('sha1', $this->query);
+        return hash(
+            'sha1',
+            sprintf(
+                '%s%s%s%s',
+                $this->getEndpoint(),
+                $this->getLocale(),
+                json_encode($this->getHeaders()),
+                $this->getGraphQLQuery()
+            )
+        );
     }
 
     private function buildGraph($field, $key, $graphQlQuery)
