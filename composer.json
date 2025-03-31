@@ -15,21 +15,22 @@
         "php": "^7.1 || ^8.0",
         "cfpinto/graphql": "^0.1.0",
         "eightpoints/guzzle-bundle": "^8.0",
-        "symfony/dependency-injection": "^4.0 || ^5.0 || ^6.0",
-        "symfony/framework-bundle": "^4.0 || ^5.0 || ^6.0"
+        "symfony/dependency-injection": "^6.0 || ^7.0",
+        "symfony/framework-bundle": "^6.0 || ^7.0",
+        "symfony/translation": "^6.0 || ^7.0"
     },
     "suggest": {
-        "symfony/cache": "^4.0 || ^5.0 || ^6.0"
+        "symfony/cache": "^6.0 || ^7.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0"
     },
     "autoload": {
         "psr-4": {
-            "IDCI\\Bundle\\GraphQLClientBundle\\": ""
+            "IDCI\\Bundle\\GraphQLClientBundle\\": "src/"
         },
         "exclude-from-classmap": [
-            "/Tests/"
+            "/tests/"
         ]
     },
     "autoload-dev": {

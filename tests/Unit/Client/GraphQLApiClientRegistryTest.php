@@ -8,15 +8,8 @@ use PHPUnit\Framework\TestCase;
 
 class GraphQLApiClientRegistryTest extends TestCase
 {
-    /**
-     * @var GraphQLApiClientRegistry
-     */
-    private $graphQlApiClientRegistry;
-
-    /**
-     * @var GraphQLApiClientInterface
-     */
-    private $graphQlApiClient;
+    private GraphQLApiClientRegistry $graphQlApiClientRegistry;
+    private GraphQLApiClientInterface $graphQlApiClient;
 
     public function setUp()
     {
@@ -32,9 +25,6 @@ class GraphQLApiClientRegistryTest extends TestCase
         $this->assertTrue($this->graphQlApiClientRegistry->has('dummy_alias'));
     }
 
-    /**
-     * @expectedException \UnexpectedValueException
-     */
     public function testGetIfNotExist()
     {
         $this->graphQlApiClientRegistry->get('unset_dummy_alias');
