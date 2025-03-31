@@ -11,9 +11,12 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class GraphQLApiClientCompilerPass implements CompilerPassInterface
 {
+<<<<<<< HEAD
     /**
      * {@inheritdoc}
      */
+=======
+>>>>>>> a0138fd (Fix deprecated)
     public function process(ContainerBuilder $container): void
     {
         $registryDefinition = $container->getDefinition(GraphQLApiClientRegistry::class);

@@ -4,15 +4,8 @@ namespace IDCI\Bundle\GraphQLClientBundle\Exception;
 
 final class GraphQLResultException extends \Exception
 {
-    /**
-     * @var string
-     */
-    private $graphQlQuery;
-
-    /**
-     * @var array
-     */
-    private $result;
+    private string $graphQlQuery;
+    private array $result;
 
     public function __construct(string $graphQlQuery, array $result)
     {

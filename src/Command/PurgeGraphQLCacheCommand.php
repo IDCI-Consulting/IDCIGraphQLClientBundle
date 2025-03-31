@@ -2,11 +2,16 @@
 
 namespace IDCI\Bundle\GraphQLClientBundle\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
+#[AsCommand(
+    name: 'graphql:cache:clear',
+    description: 'Clear GraphQL query cache'
+)]
 class PurgeGraphQLCacheCommand extends Command
 {
     private $container;
@@ -16,11 +21,9 @@ class PurgeGraphQLCacheCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName('graphql:cache:clear')
-            ->setDescription('Clear graphql query cache')
             ->setHelp('Clear results of graphql queries in cache')
             ->setHelp(
                 <<<EOT
@@ -34,7 +37,7 @@ EOT
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $clients = $this->getContainer()->getParameter('idci_graphql_client.clients');
         $helper = $this->getHelper('question');
@@ -50,13 +53,15 @@ EOT
 
         if (!isset($clients[$clientName]['cache'])) {
             $output->writeln(sprintf('<error>No cache found for client "%s"</error>', $clientName));
-            exit;
+            return Command::FAILURE;
         }
 
         $this->getContainer()->get($clients[$clientName]['cache'])->clear();
         $this->getContainer()->get($clients[$clientName]['cache'])->commit();
 
         $output->writeln(sprintf('<info>Cache cleared for client "%s"</info>', $clientName));
+
+        return Command::SUCCESS;
     }
 
     private function getContainer()

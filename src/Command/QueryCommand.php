@@ -2,6 +2,7 @@
 
 namespace IDCI\Bundle\GraphQLClientBundle\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use IDCI\Bundle\GraphQLClientBundle\Client\GraphQLApiClient;
 use IDCI\Bundle\GraphQLClientBundle\Client\GraphQLApiClientRegistryInterface;
 use IDCI\Bundle\GraphQLClientBundle\Query\GraphQLQueryFactory;
@@ -12,12 +13,13 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
+#[AsCommand(
+    name: 'graphql:query',
+    description: 'Execute graphql query'
+)]
 class QueryCommand extends Command
 {
-    /**
-     * @var GraphQLApiClientRegistryInterface
-     */
-    private $graphQLApiClientRegistry;
+    private GraphQLApiClientRegistryInterface $graphQLApiClientRegistry;
 
     public function __construct(GraphQLApiClientRegistryInterface $graphQLApiClientRegistry)
     {
@@ -26,11 +28,9 @@ class QueryCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName('graphql:query')
-            ->setDescription('Execute graphql query')
             ->addArgument('query', InputArgument::REQUIRED, 'The graphql query which will be executed')
             ->addOption('cache', null, InputOption::VALUE_NONE, 'If the query should be stored in cache')
             ->setHelp('Execute graphql query')
@@ -46,7 +46,7 @@ EOT
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $clients = $this->graphQLApiClientRegistry->getAll();
         $helper = $this->getHelper('question');
@@ -73,12 +73,12 @@ EOT
         } catch (\Exception $e) {
             $output->writeln(sprintf('<error>Error during the execution of the request: "%s"</error>', $e->getMessage()));
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $output->writeln(sprintf('<info>Query has been successfully executed, time spent: "%s"</info>', microtime(true) - $start));
         $output->writeln(json_encode($result, JSON_PRETTY_PRINT));
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

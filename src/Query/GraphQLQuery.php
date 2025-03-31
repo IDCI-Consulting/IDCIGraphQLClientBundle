@@ -9,59 +9,19 @@ use Symfony\Component\HttpFoundation\File\File;
 
 class GraphQLQuery
 {
-    const MUTATION_TYPE = 'mutation';
+    const string MUTATION_TYPE = 'mutation';
+    const string QUERY_TYPE = 'query';
 
-    const QUERY_TYPE = 'query';
-
-    /**
-     * @var string
-     */
-    private $type;
-
-    /**
-     * @var string|array
-     */
-    private $action;
-
-    /**
-     * @var string
-     */
-    private $endpoint;
-
-    /**
-     * @var array
-     */
-    private $actionParameters;
-
-    /**
-     * @var array
-     */
-    private $requestedFields;
-
-    /**
-     * @var string
-     */
-    private $query;
-
-    /**
-     * @var GraphQLApiClientInterface
-     */
-    private $client;
-
-    /**
-     * @var array
-     */
-    private $files = [];
-
-    /**
-     * @var array
-     */
-    private $headers = [];
-
-    /**
-     * @var string|null
-     */
-    private $locale = null;
+    private string $type;
+    private string|array $action;
+    private ?string $endpoint = null;
+    private array $actionParameters;
+    private array $requestedFields;
+    private string $query;
+    private GraphQLApiClientInterface $client;
+    private array $files = [];
+    private array $headers = [];
+    private ?string $locale = null;
 
     public function __construct(string $type, $action, array $requestedFields, GraphQLApiClientInterface $client)
     {

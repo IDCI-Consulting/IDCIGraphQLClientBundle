@@ -6,8 +6,8 @@ services:
         public: false
 
     IDCI\Bundle\GraphQLClientBundle\:
-        resource: '../../*'
-        exclude: '../../{Entity,Repository,Tests}'
+        resource: '../src/*'
+        exclude: '../src/{Entity,Repository,Tests}'
 
     IDCI\Bundle\GraphQLClientBundle\Client\GraphQLApiClient:
         abstract: true

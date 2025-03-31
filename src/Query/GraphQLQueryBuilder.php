@@ -6,30 +6,11 @@ use IDCI\Bundle\GraphQLClientBundle\Client\GraphQLApiClientInterface;
 
 class GraphQLQueryBuilder
 {
-    /**
-     * @var string
-     */
-    private $type = GraphQLQuery::QUERY_TYPE;
-
-    /**
-     * @var string
-     */
-    private $action;
-
-    /**
-     * @var array
-     */
-    private $arguments = [];
-
-    /**
-     * @var array
-     */
-    private $requestedFields = [];
-
-    /**
-     * @var GraphQLApiClientInterface
-     */
-    private $client;
+    private string $type = GraphQLQuery::QUERY_TYPE;
+    private string $action;
+    private array $arguments = [];
+    private array $requestedFields = [];
+    private GraphQLApiClientInterface $client;
 
     public function __construct(GraphQLApiClientInterface $client)
     {
