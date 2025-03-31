@@ -9,8 +9,8 @@ use Symfony\Component\HttpFoundation\File\File;
 
 class GraphQLQuery
 {
-    const string MUTATION_TYPE = 'mutation';
-    const string QUERY_TYPE = 'query';
+    public const string MUTATION_TYPE = 'mutation';
+    public const string QUERY_TYPE = 'query';
 
     private string $type;
     private string|array $action;
