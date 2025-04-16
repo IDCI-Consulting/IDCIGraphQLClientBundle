@@ -16,6 +16,7 @@ Basic configuration
 -------------------
 
 Define new GuzzleHttp client(s):
+
 ```yaml
 eight_points_guzzle:
     clients:
@@ -64,9 +65,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class HomeController extends AbstractController
 {
-    /**
-     * @Route("/")
-     */
+    #[Route('/')]
     public function homeAction(GraphQLApiClientRegistryInterface $graphQlApiClientRegistry)
     {
         $firstClient = $graphQlApiClientRegistry->get('my_client_one');
@@ -79,7 +78,7 @@ class HomeController extends AbstractController
 Simple Query builder
 --------------------
 
-The client use a query builder which simplify the formatting of the graphql query.
+The client use a query builder which simplify the formatting of the graphql query:
 
 ```php
 <?php
@@ -92,7 +91,7 @@ class GraphQLApiClient
 }
 ```
 
-Then the GraphQLQuery object can be use to retrieve the builded GraphQL query in string format
+Then the GraphQLQuery object can be use to retrieve the builded GraphQL query in string format:
 
 ```php
 <?php
@@ -101,7 +100,7 @@ $queryString = $query->getGraphQlQuery();
 echo $queryString;
 ```
 
-Or to retrieve the results of the query
+Or to retrieve the results of the query:
 
 ```php
 <?php
@@ -127,7 +126,7 @@ $query = $graphQlApiClientRegistry->get('my_client')->buildQuery(
 )->getGraphQlQuery();
 ```
 
-will generate
+will generate:
 
 ```
 {
@@ -142,6 +141,7 @@ will generate
 ```
 
 #### Query arguments
+
 ```php
 <?php
 
@@ -161,7 +161,7 @@ $query = $graphQlApiClientRegistry->get('my_client')->buildQuery(
 )->getGraphQlQuery();
 ```
 
-will generate
+will generate:
 
 ```
 {
@@ -176,6 +176,7 @@ will generate
 ```
 
 #### Sub-query arguments
+
 ```php
 <?php
 
@@ -197,7 +198,7 @@ $query = $graphQlApiClientRegistry->get('my_client')->buildQuery(
 )->getGraphQlQuery();
 ```
 
-will generate
+will generate:
 
 ```
 {
@@ -215,6 +216,7 @@ will generate
 ```
 
 #### Fragments
+
 ```php
 <?php
 
@@ -239,7 +241,7 @@ $query = $graphQlApiClientRegistry->get('my_client')->buildQuery(
 )->getGraphQlQuery();
 ```
 
-will generate
+will generate:
 
 ```
 {
@@ -290,7 +292,7 @@ $query = $graphQlApiClientRegistry->get('my_client')->buildQuery(
 )->getGraphQlQuery();
 ```
 
-will generate
+will generate:
 
 ```
 {
@@ -327,7 +329,7 @@ $query = $graphQlApiClientRegistry->get('my_client')->buildMutation(
 )->getGraphQlQuery();
 ```
 
-will generate
+will generate:
 
 ```
 mutation {
@@ -341,7 +343,7 @@ mutation {
 Fluent Query builder
 --------------------
 
-You can also use an alternative version of the query builder with a fluent interface (inspired by doctrine query builder).
+You can also use an alternative version of the query builder with a fluent interface (inspired by doctrine query builder):
 
 ```php
 <?php
@@ -373,7 +375,7 @@ $qb->getQuery()->getResults();
 ?>
 ```
 
-Will generate
+Will generate:
 
 ```
 mutation {
@@ -403,7 +405,7 @@ Install [symfony/cache](https://packagist.org/packages/symfony/cache):
 $ composer require symfony/cache
 ```
 
-Create new cache adapter provider(s) in your ```config/packages/cache.yaml``` ([official docs](https://symfony.com/doc/current/components/cache))
+Create new cache adapter provider(s) in your ```config/packages/cache.yaml``` ([official docs](https://symfony.com/doc/current/components/cache)):
 
 ```yaml
 framework:
@@ -418,7 +420,7 @@ framework:
 
 ```
 
-Update your configuration in ```config/packages/idci_graphql_client.yaml```
+Update your configuration in ```config/packages/idci_graphql_client.yaml```:
 
 ```yaml
 idci_graphql_client:
@@ -445,7 +447,7 @@ when@dev:
 Command
 -------
 
-You can select which cache you want purged by using
+You can select which cache you want purged by using:
 
 ```shell
 $ php bin/console cache:pool:clear cache.my_first_adapter

@@ -5,7 +5,7 @@ namespace IDCI\Bundle\GraphQLClientBundle\Exception;
 final class GraphQLResultException extends \Exception
 {
     private string $graphQlQuery;
-    private array $result;
+    private array $result = [];
 
     public function __construct(string $graphQlQuery, array $result)
     {
@@ -59,8 +59,3 @@ final class GraphQLResultException extends \Exception
         );
     }
 }
-
-// $this->logger->warning('', [
-//     'query' => $graphQlQuery->getGraphQlQuery(),
-//     'result' => $result,
-// ]);

@@ -9,6 +9,7 @@ services:
         resource: '../src/*'
         exclude: '../src/{Entity,Repository,Tests}'
 
+    # Client
     IDCI\Bundle\GraphQLClientBundle\Client\GraphQLApiClient:
         abstract: true
 

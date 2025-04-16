@@ -13,25 +13,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class GraphQLApiClient implements GraphQLApiClientInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var ClientInterface
-     */
-    private $httpClient;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
-    /**
-     * @var AdapterInterface
-     */
-    private $cache;
+    private LoggerInterface $logger;
+    private ClientInterface $httpClient;
+    private TranslatorInterface $translator;
+    private AdapterInterface $cache;
 
     public function __construct(
         LoggerInterface $logger,
