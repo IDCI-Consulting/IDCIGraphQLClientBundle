@@ -35,7 +35,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "IDCI\\Bundle\\GraphQLClientBundle\\Tests\\": "Tests"
+            "IDCI\\Bundle\\GraphQLClientBundle\\Tests\\": "tests/"
         }
     }
 }

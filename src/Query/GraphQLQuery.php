@@ -15,8 +15,8 @@ class GraphQLQuery
     private string $type;
     private string|array $action;
     private ?string $endpoint = null;
-    private array $actionParameters;
-    private array $requestedFields;
+    private array $actionParameters = [];
+    private array $requestedFields = [];
     private string $query;
     private GraphQLApiClientInterface $client;
     private array $files = [];

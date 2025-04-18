@@ -3,7 +3,6 @@
 namespace IDCI\Bundle\GraphQLClientBundle\Command;
 
 use Symfony\Component\Console\Attribute\AsCommand;
-use IDCI\Bundle\GraphQLClientBundle\Client\GraphQLApiClient;
 use IDCI\Bundle\GraphQLClientBundle\Client\GraphQLApiClientRegistryInterface;
 use IDCI\Bundle\GraphQLClientBundle\Query\GraphQLQueryFactory;
 use Symfony\Component\Console\Command\Command;
