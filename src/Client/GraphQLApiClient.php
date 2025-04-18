@@ -16,7 +16,7 @@ class GraphQLApiClient implements GraphQLApiClientInterface
     private LoggerInterface $logger;
     private ClientInterface $httpClient;
     private TranslatorInterface $translator;
-    private AdapterInterface $cache;
+    private ?AdapterInterface $cache = null;
 
     public function __construct(
         LoggerInterface $logger,
