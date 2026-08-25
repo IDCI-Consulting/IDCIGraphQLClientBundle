@@ -231,6 +231,7 @@ EOT
 
     /**
      * @expectedException \UnexpectedValueException
+     *
      * @expectedExceptionMessage there is an error
      */
     public function testQueryWithNoDataReturnedButErrorMessage()
@@ -249,6 +250,7 @@ EOT
 
     /**
      * @expectedException \UnexpectedValueException
+     *
      * @expectedExceptionMessage this is a debug log
      */
     public function testQueryWithNoDataReturnedButDebugMessage()

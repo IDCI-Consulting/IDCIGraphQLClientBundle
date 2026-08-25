@@ -53,6 +53,7 @@ EOT
 
         if (!isset($clients[$clientName]['cache'])) {
             $output->writeln(sprintf('<error>No cache found for client "%s"</error>', $clientName));
+
             return Command::FAILURE;
         }
 

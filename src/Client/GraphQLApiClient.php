@@ -22,7 +22,7 @@ class GraphQLApiClient implements GraphQLApiClientInterface
         LoggerInterface $logger,
         ClientInterface $httpClient,
         TranslatorInterface $translator,
-        $cache = null
+        $cache = null,
     ) {
         $this->logger = $logger;
         $this->httpClient = $httpClient;
@@ -96,10 +96,10 @@ class GraphQLApiClient implements GraphQLApiClientInterface
         $result = json_decode($response->getBody(), true);
 
         if (
-            null === $result ||
-            !isset($result['data']) ||
-            null === $result['data'] ||
-            isset($result['errors']) && !empty($result['errors'])
+            null === $result
+            || !isset($result['data'])
+            || null === $result['data']
+            || isset($result['errors']) && !empty($result['errors'])
         ) {
             throw new GraphQLResultException($graphQlQuery->getGraphQlQuery(), $result ?? []);
         }

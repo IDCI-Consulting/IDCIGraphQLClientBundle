@@ -2,9 +2,9 @@
 
 namespace IDCI\Bundle\GraphQLClientBundle\Command;
 
-use Symfony\Component\Console\Attribute\AsCommand;
 use IDCI\Bundle\GraphQLClientBundle\Client\GraphQLApiClientRegistryInterface;
 use IDCI\Bundle\GraphQLClientBundle\Query\GraphQLQueryFactory;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
